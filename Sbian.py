@@ -1,4 +1,4 @@
-import random
+﻿import random
 import time
 import threading
 import pygame
@@ -6,7 +6,7 @@ from sys import exit
 
 screen_width = 1400
 screen_height = 700
-policy_alpha = 90
+policy_alpha = 70
 
 pygame.init()
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -30,6 +30,19 @@ blue_flag_alpha.set_alpha(policy_alpha)
 green_flag_alpha.set_alpha(policy_alpha)
 bullet_alpha.set_alpha(policy_alpha)
 investigation_alpha.set_alpha(policy_alpha)
+
+p1  = u"小鷹"
+p2  = u"小賣"
+p3  = u"小熊"
+p4  = u"小倉"
+p5  = u"小力"
+p6  = u"小站"
+p7  = u"小魚"
+p8  = u"小鯨"
+p9  = u"小冏"
+p10 = u"小牆"
+
+player_name_list = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -104,6 +117,9 @@ def draw_policy_table():
     draw_green_table()
             
 def main():
+
+    random.shuffle(player_name_list)
+
     while True:
         fill_background()
         draw_policy_table()
