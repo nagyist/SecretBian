@@ -53,8 +53,15 @@ p8_loc  = (990, 0)
 p9_loc  = (1360, 490)
 p10_loc = (1360, 190)
 
+status_loc = (390, 250)
+
+player_num = 10
 president = -1
 chancellor = -1
+pre_president = -1
+pre_chancellor = -1
+human_player = -1
+mode = 0
 player_name_list = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
 player_name_loc  = [p1_loc, p2_loc, p3_loc, p4_loc, p5_loc, p6_loc, p7_loc, p8_loc, p9_loc, p10_loc]
 player_role = [0] * 10
@@ -140,7 +147,7 @@ def draw_policy_table():
 def draw_player_name():
     global player_name_list, president, chancellor
 
-    for i in range(10):
+    for i in range(player_num):
         if i == president:
             if 0 <= president <= 2 or 5 <= president <= 7:
                 screen.blit(write(player_name_list[i]+u" 總統", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
@@ -155,20 +162,43 @@ def draw_player_name():
                 screen.blit(write(u"院長", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]+20))
         else:
             screen.blit(write(player_name_list[i], BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
+
+def findhp(pnlist):
+    for i in range(player_num):
+        if pnlist[i] == u"小鷹":
+            return i
+
+def draw_select_chancellor():
+    screen.blit(write(u"小鷹 總統，您要選誰當院長呢？", BLACK, 20), status_loc)
             
+def select_chancellor_ai():
+    candidate = []
+    
+    if 0 == len(candidate):
+        for i in range(player_num):
+            if i in [president, pre_president, pre_chancellor]:
+                continue
+            else:
+                candidate.append(i)
+    
+    random.shuffle(candidate)
+    
+    return candidate[0]
+    
 def main():
-    global player_role, president, chancellor
+    global player_role, mode, player_name_list, president, chancellor, human_player
 
     first = 1
     # index 0: bian, 1~3: green party, 4~9: blue party
     player_ini_role = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     
     random.shuffle(player_name_list)
-   
+    human_player = findhp(player_name_list)
+    
     while True:
         if 1 == first:
             random.shuffle(player_ini_role)
-            for i in range(10):
+            for i in range(player_num):
                 if 0 == i:
                     # 2 == bian role
                     player_role[player_ini_role[i]] = 2
@@ -178,12 +208,24 @@ def main():
                 else:
                     # 0 == blue party
                     player_role[player_ini_role[i]] = 0
-            president = random.randint(0, 9)
             first = 0
+        if 0 == mode:
+            president = random.randint(0, player_num-1)
+            #president = human_player
+            mode = 1
+    
+        if 1 == mode:
+            if president == human_player:
+                mode = 2
+            else:
+                chancellor = select_chancellor_ai()
+                mode = 3
     
         fill_background()
         draw_policy_table()
         draw_player_name()
+        if 2 == mode:
+            draw_select_chancellor()
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
