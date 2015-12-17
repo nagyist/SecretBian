@@ -42,12 +42,33 @@ p8  = u"小鯨"
 p9  = u"小冏"
 p10 = u"小牆"
 
+p1_loc  = (990, 675)
+p2_loc  = (690, 675)
+p3_loc  = (390, 675)
+p4_loc  = (0, 490)
+p5_loc  = (0, 190)
+p6_loc  = (390, 0)
+p7_loc  = (690, 0)
+p8_loc  = (990, 0)
+p9_loc  = (1360, 490)
+p10_loc = (1360, 190)
+
+president = 0
+chancellor = 0
 player_name_list = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
+player_name_loc  = [p1_loc, p2_loc, p3_loc, p4_loc, p5_loc, p6_loc, p7_loc, p8_loc, p9_loc, p10_loc]
+player_role = [0] * 10
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 
 policy_interval_gap = 100
+
+def write(msg="pygame is cool", color= (0,0,0), size = 14):
+    myfont = pygame.font.Font("wqy-zenhei.ttf", size)
+    mytext = myfont.render(msg, True, color)
+    mytext = mytext.convert_alpha()
+    return mytext 
 
 def fill_background():
     for y in range(0, screen_height, background.get_height()):
@@ -116,13 +137,39 @@ def draw_policy_table():
     draw_blue_table()
     draw_green_table()
             
+def draw_player_name():
+    global player_name_list
+
+    for i in range(10):
+        screen.blit(write(player_name_list[i], BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
+            
 def main():
+    global player_role
 
+    first = 1
+    # index 0: bian, 1~3: green party, 4~9: blue party
+    player_ini_role = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    
     random.shuffle(player_name_list)
-
+   
     while True:
+        if 1 == first:
+            random.shuffle(player_ini_role)
+            for i in range(10):
+                if 0 == i:
+                    # 2 == bian role
+                    player_role[player_ini_role[i]] = 2
+                elif 0 < i < 4:
+                    # 1 == green party
+                    player_role[player_ini_role[i]] = 1
+                else:
+                    # 0 == blue party
+                    player_role[player_ini_role[i]] = 0
+            first = 0
+    
         fill_background()
         draw_policy_table()
+        draw_player_name()
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
