@@ -62,6 +62,8 @@ pre_president = -1
 pre_chancellor = -1
 human_player = -1
 mode = 0
+#positive: blue party, negative: green party
+party_score = []
 player_name_list = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
 player_name_loc  = [p1_loc, p2_loc, p3_loc, p4_loc, p5_loc, p6_loc, p7_loc, p8_loc, p9_loc, p10_loc]
 player_role = [0] * 10
@@ -208,6 +210,7 @@ def main():
                 else:
                     # 0 == blue party
                     player_role[player_ini_role[i]] = 0
+                party_score.append([0]*player_num)
             first = 0
         if 0 == mode:
             president = random.randint(0, player_num-1)
