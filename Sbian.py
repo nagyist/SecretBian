@@ -96,6 +96,7 @@ yes_btn_loc = [0] * player_num
 no_btn_loc = [0] * player_num
 
 BLACK = (0, 0, 0)
+BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 
 policy_interval_gap = 100
@@ -289,6 +290,17 @@ def ini_arrow_loc():
         elif 8 <= i <= 9:
             arrow_loc[i] = (arrow_loc[i][0]-50, arrow_loc[i][1])
 
+def draw_button(loc, str, image = yes_btn, size = 16):
+    (mouseX, mouseY) = pygame.mouse.get_pos()
+        
+    fontx = loc[0]+ 47 - int(len(str)/2*12)
+    fonty = loc[1]+15
+    screen.blit(image, loc)
+    if loc[0] <= mouseX <= loc[0]+image.get_width() and loc[1] <= mouseY <= loc[1]+image.get_height():
+        screen.blit(write(str, BLUE, size), (fontx, fonty))
+    else:
+        screen.blit(write(str, BLACK, size), (fontx, fonty))            
+            
 def yes_no_btn():
     global arrow_loc, yes_btn_loc, no_btn_loc
     
@@ -355,7 +367,10 @@ def main():
         if 2 == mode:
             draw_select_chancellor()
         elif 3 == mode:
-            pass
+            if human_player != president and human_player != chancellor:
+                screen.blit(write(u"%s 代表，您是否贊成 %s 當總統以及 %s 當院長？"%(player_name_list[human_player], player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
+                draw_button(yes_btn_loc[human_player],u"同意", yes_btn)
+                draw_button(no_btn_loc[human_player],u"否決", no_btn)
         # Test location
         #for i in range(player_num):
         #    screen.blit(yes_btn, yes_btn_loc[i])
