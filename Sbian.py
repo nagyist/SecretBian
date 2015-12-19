@@ -61,7 +61,11 @@ chancellor = -1
 pre_president = -1
 pre_chancellor = -1
 human_player = -1
+#mode == 0, ini. mode == 1, after select president candidate
+#mode == 2, for human select chancellor.
+#mode == 3, for computer select chancellor.
 mode = 0
+
 #positive: blue party, negative: green party
 party_score = []
 player_name_list = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
@@ -165,16 +169,48 @@ def draw_player_name():
         else:
             screen.blit(write(player_name_list[i], BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
 
+# find human player
 def findhp(pnlist):
     for i in range(player_num):
         if pnlist[i] == u"小鷹":
             return i
 
 def draw_select_chancellor():
-    screen.blit(write(u"小鷹 總統，您要選誰當院長呢？", BLACK, 20), status_loc)
+    screen.blit(write(u"%s 總統，您要選誰當院長呢？"%p1, BLACK, 20), status_loc)
             
 def select_chancellor_ai():
     candidate = []
+    
+    # if blue party
+    if 0 == player_role[president]:
+        for i in range(player_num):
+            if i in [president, pre_president, pre_chancellor]:
+                continue
+            elif party_score[president][i] < -1:
+                continue
+            elif -1 == party_score[president][i]:
+                candidate.append(i)
+            elif 0 == party_score[president][i]:
+                candidate.extend([i]*3)
+            elif 1 == party_score[president][i]:
+                candidate.extend([i]*9)
+            else: # party_score[i] > 1
+                candidate.extend([i]*27)
+    # if green party
+    else:
+        for i in range(player_num):
+            if i in [president, pre_president, pre_chancellor]:
+                continue
+            elif party_score[president][i] > 1:
+                continue
+            elif 1 == party_score[president][i]:
+                candidate.append(i)
+            elif 0 == party_score[president][i]:
+                candidate.extend([i]*3)
+            elif -1 == party_score[president][i]:
+                candidate.extend([i]*9)
+            else: # party_score[i] < -1
+                candidate.extend([i]*27)
     
     if 0 == len(candidate):
         for i in range(player_num):
@@ -214,6 +250,7 @@ def main():
             first = 0
         if 0 == mode:
             president = random.randint(0, player_num-1)
+            chancellor = -1
             #president = human_player
             mode = 1
     
