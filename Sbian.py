@@ -79,6 +79,7 @@ human_player = -1
 #mode == 0, ini. mode == 1, after select president candidate
 #mode == 2, for human select chancellor.
 #mode == 3, for computer select chancellor.
+#mode == 4, human is president and chancellor candidate is done.
 mode = 0
 
 #positive: blue party, negative: green party
@@ -191,7 +192,17 @@ def findhp(pnlist):
         if pnlist[i] == u"小鷹":
             return i
 
-def id_to_arrow__image(id):
+def id_to_arrow_image(id):
+    if 0 <= id <= 2:
+        return down_arrow
+    elif 3 <= id <= 4:
+        return left_arrow
+    elif 5 <= id <= 7:
+        return up_arrow
+    elif 8 <= id <= 9:
+        return right_arrow
+
+def id_to_arrow_alpha_image(id):
     if 0 <= id <= 2:
         return down_arrow2
     elif 3 <= id <= 4:
@@ -199,16 +210,20 @@ def id_to_arrow__image(id):
     elif 5 <= id <= 7:
         return up_arrow2
     elif 8 <= id <= 9:
-        return right_arrow2
-    
+        return right_arrow2        
             
 def draw_select_chancellor():
     screen.blit(write(u"%s 總統，您要選誰當院長呢？"%p1, BLACK, 20), status_loc)
     
+    (MouseX, MouseY) = pygame.mouse.get_pos()
+    
     for i in range(player_num):
         if i in [president, pre_president, pre_chancellor]:
             continue
-        screen.blit(id_to_arrow__image(i), arrow_loc[i])
+        if arrow_loc[i][0] <= MouseX <= arrow_loc[i][0] + id_to_arrow_image(i).get_width() and arrow_loc[i][1] <= MouseY <= arrow_loc[i][1] + id_to_arrow_image(i).get_height():
+            screen.blit(id_to_arrow_image(i), arrow_loc[i])
+        else:
+            screen.blit(id_to_arrow_alpha_image(i), arrow_loc[i])
             
 def select_chancellor_ai():
     candidate = []
@@ -295,7 +310,7 @@ def main():
         if 0 == mode:
             president = random.randint(0, player_num-1)
             chancellor = -1
-            #president = human_player
+            #president = human_player #For test only
             mode = 1
     
         if 1 == mode:
@@ -315,9 +330,17 @@ def main():
             if event.type == pygame.QUIT:
                 exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                    (mouseX, mouseY) = pygame.mouse.get_pos()
-                    #if f_x <= mouseX <= f_x+button1.get_width() and f_y <= mouseY <= f_y+button1.get_height():
-                    #    break            
+                if 2 == mode:
+                    (MouseX, MouseY) = pygame.mouse.get_pos()
+                    for i in range(player_num):
+                        if i in [president, pre_president, pre_chancellor]:
+                            continue
+                        if arrow_loc[i][0] <= MouseX <= arrow_loc[i][0] + id_to_arrow_image(i).get_width() and arrow_loc[i][1] <= MouseY <= arrow_loc[i][1] + id_to_arrow_image(i).get_height():
+                            chancellor = i
+                            mode = 4
+                            break
+                    break
+                        
     pygame.quit()
     quit()
 
