@@ -7,6 +7,7 @@ from sys import exit
 screen_width = 1400
 screen_height = 700
 policy_alpha = 70
+arrow_alpha = 100
 
 pygame.init()
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -17,6 +18,7 @@ blue_flag_image = 'Image/blue_flag_100x75.jpg'
 green_flag_image = 'Image/green_flag_100x75.jpg'
 bullet_image = 'Image/bullet__100x75.jpg'
 investigation_image = 'Image/investigation_100x75.png'
+up_arrow_image = 'Image/arrow_30x30.gif'
 
 background = pygame.image.load(background_image_filename).convert()
 blue_flag  = pygame.image.load(blue_flag_image).convert()
@@ -25,7 +27,20 @@ blue_flag_alpha  = pygame.image.load(blue_flag_image).convert()
 green_flag_alpha = pygame.image.load(green_flag_image).convert()
 bullet_alpha     = pygame.image.load(bullet_image).convert()
 investigation_alpha = pygame.image.load(investigation_image).convert()
+up_arrow = pygame.image.load(up_arrow_image).convert()
 
+left_arrow = pygame.transform.rotate(up_arrow, 90)
+down_arrow = pygame.transform.rotate(up_arrow, 180)
+right_arrow = pygame.transform.rotate(up_arrow, 270)
+up_arrow2 = pygame.image.load(up_arrow_image).convert()
+left_arrow2 = pygame.transform.rotate(up_arrow, 90)
+down_arrow2 = pygame.transform.rotate(up_arrow, 180)
+right_arrow2 = pygame.transform.rotate(up_arrow, 270)
+
+up_arrow2.set_alpha(arrow_alpha)
+left_arrow2.set_alpha(arrow_alpha)
+down_arrow2.set_alpha(arrow_alpha)
+right_arrow2.set_alpha(arrow_alpha)
 blue_flag_alpha.set_alpha(policy_alpha)
 green_flag_alpha.set_alpha(policy_alpha)
 bullet_alpha.set_alpha(policy_alpha)
@@ -50,8 +65,8 @@ p5_loc  = (0, 190)
 p6_loc  = (390, 0)
 p7_loc  = (690, 0)
 p8_loc  = (990, 0)
-p9_loc  = (1360, 490)
-p10_loc = (1360, 190)
+p9_loc  = (1360, 190)
+p10_loc = (1360, 490)
 
 status_loc = (390, 250)
 
@@ -71,6 +86,7 @@ party_score = []
 player_name_list = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
 player_name_loc  = [p1_loc, p2_loc, p3_loc, p4_loc, p5_loc, p6_loc, p7_loc, p8_loc, p9_loc, p10_loc]
 player_role = [0] * 10
+arrow_loc = list(player_name_loc)
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -175,8 +191,24 @@ def findhp(pnlist):
         if pnlist[i] == u"小鷹":
             return i
 
+def id_to_arrow__image(id):
+    if 0 <= id <= 2:
+        return down_arrow2
+    elif 3 <= id <= 4:
+        return left_arrow2
+    elif 5 <= id <= 7:
+        return up_arrow2
+    elif 8 <= id <= 9:
+        return right_arrow2
+    
+            
 def draw_select_chancellor():
     screen.blit(write(u"%s 總統，您要選誰當院長呢？"%p1, BLACK, 20), status_loc)
+    
+    for i in range(player_num):
+        if i in [president, pre_president, pre_chancellor]:
+            continue
+        screen.blit(id_to_arrow__image(i), arrow_loc[i])
             
 def select_chancellor_ai():
     candidate = []
@@ -222,6 +254,17 @@ def select_chancellor_ai():
     random.shuffle(candidate)
     
     return candidate[0]
+
+def ini_arrow_loc():
+    for i in range(player_num):
+        if 0 <= i <= 2:
+            arrow_loc[i] = (arrow_loc[i][0], arrow_loc[i][1]-50)
+        elif 3 <= i <= 4:
+            arrow_loc[i] = (arrow_loc[i][0]+50, arrow_loc[i][1])
+        elif 5 <= i <= 7:
+            arrow_loc[i] = (arrow_loc[i][0], arrow_loc[i][1]+50)
+        elif 8 <= i <= 9:
+            arrow_loc[i] = (arrow_loc[i][0]-50, arrow_loc[i][1])
     
 def main():
     global player_role, mode, player_name_list, president, chancellor, human_player
@@ -231,6 +274,7 @@ def main():
     player_ini_role = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     
     random.shuffle(player_name_list)
+    ini_arrow_loc()
     human_player = findhp(player_name_list)
     
     while True:
