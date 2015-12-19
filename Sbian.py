@@ -19,6 +19,8 @@ green_flag_image = 'Image/green_flag_100x75.jpg'
 bullet_image = 'Image/bullet__100x75.jpg'
 investigation_image = 'Image/investigation_100x75.png'
 up_arrow_image = 'Image/arrow_30x30.gif'
+yes_btn_image = 'Image/button1_100x50.gif'
+no_btn_image = 'Image/button2_100x50.gif'
 
 background = pygame.image.load(background_image_filename).convert()
 blue_flag  = pygame.image.load(blue_flag_image).convert()
@@ -28,6 +30,8 @@ green_flag_alpha = pygame.image.load(green_flag_image).convert()
 bullet_alpha     = pygame.image.load(bullet_image).convert()
 investigation_alpha = pygame.image.load(investigation_image).convert()
 up_arrow = pygame.image.load(up_arrow_image).convert()
+yes_btn = pygame.image.load(yes_btn_image).convert()
+no_btn = pygame.image.load(no_btn_image).convert()
 
 left_arrow = pygame.transform.rotate(up_arrow, 90)
 down_arrow = pygame.transform.rotate(up_arrow, 180)
@@ -79,15 +83,17 @@ human_player = -1
 #mode == 0, ini. mode == 1, after select president candidate
 #mode == 2, for human select chancellor.
 #mode == 3, for computer select chancellor.
-#mode == 4, human is president and chancellor candidate is done.
+#mode == 4, president and chancellor candidate is done.
 mode = 0
 
 #positive: blue party, negative: green party
 party_score = []
 player_name_list = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
 player_name_loc  = [p1_loc, p2_loc, p3_loc, p4_loc, p5_loc, p6_loc, p7_loc, p8_loc, p9_loc, p10_loc]
-player_role = [0] * 10
+player_role = [0] * player_num
 arrow_loc = list(player_name_loc)
+yes_btn_loc = [0] * player_num
+no_btn_loc = [0] * player_num
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -178,7 +184,7 @@ def draw_player_name():
                 screen.blit(write(player_name_list[i], BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
                 screen.blit(write(u"總統", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]+20))
         elif i == chancellor:
-            if 0 <= president <= 2 or 5 <= president <= 7:
+            if 0 <= chancellor <= 2 or 5 <= chancellor <= 7:
                 screen.blit(write(player_name_list[i]+u" 院長", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
             else:
                 screen.blit(write(player_name_list[i], BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
@@ -271,25 +277,48 @@ def select_chancellor_ai():
     return candidate[0]
 
 def ini_arrow_loc():
+    global arrow_loc
+    
     for i in range(player_num):
         if 0 <= i <= 2:
             arrow_loc[i] = (arrow_loc[i][0], arrow_loc[i][1]-50)
         elif 3 <= i <= 4:
             arrow_loc[i] = (arrow_loc[i][0]+50, arrow_loc[i][1])
         elif 5 <= i <= 7:
-            arrow_loc[i] = (arrow_loc[i][0], arrow_loc[i][1]+50)
+            arrow_loc[i] = (arrow_loc[i][0], arrow_loc[i][1]+30)
         elif 8 <= i <= 9:
             arrow_loc[i] = (arrow_loc[i][0]-50, arrow_loc[i][1])
+
+def yes_no_btn():
+    global arrow_loc, yes_btn_loc, no_btn_loc
     
+    for i in range(player_num):
+        if 0 <= i <= 2:
+            yes_btn_loc[i] = (arrow_loc[i][0]-100, arrow_loc[i][1])
+            no_btn_loc[i] = (arrow_loc[i][0]+25, arrow_loc[i][1])
+        elif 3 <= i <= 4:
+            yes_btn_loc[i] = (arrow_loc[i][0], arrow_loc[i][1]-50)
+            no_btn_loc[i] = (arrow_loc[i][0], arrow_loc[i][1]+25)
+        elif 5 <= i <= 7:
+            yes_btn_loc[i] = (arrow_loc[i][0]-100, arrow_loc[i][1])
+            no_btn_loc[i] = (arrow_loc[i][0]+25, arrow_loc[i][1])
+        elif 8 <= i <= 9:
+            yes_btn_loc[i] = (arrow_loc[i][0]-75, arrow_loc[i][1]-50)
+            no_btn_loc[i] = (arrow_loc[i][0]-75, arrow_loc[i][1]+25)
+        
+def ini_loc():
+    ini_arrow_loc()
+    yes_no_btn()
+            
 def main():
     global player_role, mode, player_name_list, president, chancellor, human_player
-
+    
     first = 1
     # index 0: bian, 1~3: green party, 4~9: blue party
     player_ini_role = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     
     random.shuffle(player_name_list)
-    ini_arrow_loc()
+    ini_loc()
     human_player = findhp(player_name_list)
     
     while True:
@@ -325,6 +354,13 @@ def main():
         draw_player_name()
         if 2 == mode:
             draw_select_chancellor()
+        elif 3 == mode:
+            pass
+        # Test location
+        #for i in range(player_num):
+        #    screen.blit(yes_btn, yes_btn_loc[i])
+        #    screen.blit(no_btn, no_btn_loc[i])
+        # End test location
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
