@@ -21,6 +21,7 @@ investigation_image = 'Image/investigation_100x75.png'
 up_arrow_image = 'Image/arrow_30x30.gif'
 yes_btn_image = 'Image/button1_100x50.gif'
 no_btn_image = 'Image/button2_100x50.gif'
+bian_image = 'Image/bian_60x45.jpg'
 
 background = pygame.image.load(background_image_filename).convert()
 blue_flag  = pygame.image.load(blue_flag_image).convert()
@@ -29,9 +30,13 @@ blue_flag_alpha  = pygame.image.load(blue_flag_image).convert()
 green_flag_alpha = pygame.image.load(green_flag_image).convert()
 bullet_alpha     = pygame.image.load(bullet_image).convert()
 investigation_alpha = pygame.image.load(investigation_image).convert()
+bian = pygame.image.load(bian_image).convert()
 up_arrow = pygame.image.load(up_arrow_image).convert()
 yes_btn = pygame.image.load(yes_btn_image).convert()
 no_btn = pygame.image.load(no_btn_image).convert()
+
+blue_flag_s = pygame.transform.scale(blue_flag, (60, 45))
+green_flag_s = pygame.transform.scale(green_flag, (60, 45))
 
 left_arrow = pygame.transform.rotate(up_arrow, 90)
 down_arrow = pygame.transform.rotate(up_arrow, 180)
