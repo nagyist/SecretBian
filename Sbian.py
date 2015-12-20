@@ -111,6 +111,8 @@ player_role = [0] * player_num
 arrow_loc = list(player_name_loc)
 yes_btn_loc = [0] * player_num
 no_btn_loc = [0] * player_num
+#1: Accepted, 0: No
+election_ch = [0] * player_num
 
 BLACK = (0, 0, 0)
 BLUE = (0, 0, 255)
@@ -342,22 +344,31 @@ def yes_no_btn():
     
     for i in range(player_num):
         if 0 <= i <= 2:
-            yes_btn_loc[i] = (arrow_loc[i][0]-100, arrow_loc[i][1])
-            no_btn_loc[i] = (arrow_loc[i][0]+25, arrow_loc[i][1])
+            yes_btn_loc[i] = (arrow_loc[i][0]-100, arrow_loc[i][1]-30)
+            no_btn_loc[i] = (arrow_loc[i][0]+25, arrow_loc[i][1]-30)
         elif 3 <= i <= 4:
-            yes_btn_loc[i] = (arrow_loc[i][0], arrow_loc[i][1]-50)
-            no_btn_loc[i] = (arrow_loc[i][0], arrow_loc[i][1]+25)
+            yes_btn_loc[i] = (arrow_loc[i][0]+20, arrow_loc[i][1]-50)
+            no_btn_loc[i] = (arrow_loc[i][0]+20, arrow_loc[i][1]+25)
         elif 5 <= i <= 7:
-            yes_btn_loc[i] = (arrow_loc[i][0]-100, arrow_loc[i][1])
-            no_btn_loc[i] = (arrow_loc[i][0]+25, arrow_loc[i][1])
+            yes_btn_loc[i] = (arrow_loc[i][0]-100, arrow_loc[i][1]+30)
+            no_btn_loc[i] = (arrow_loc[i][0]+25, arrow_loc[i][1]+30)
         elif 8 <= i <= 9:
-            yes_btn_loc[i] = (arrow_loc[i][0]-75, arrow_loc[i][1]-50)
-            no_btn_loc[i] = (arrow_loc[i][0]-75, arrow_loc[i][1]+25)
+            yes_btn_loc[i] = (arrow_loc[i][0]-95, arrow_loc[i][1]-50)
+            no_btn_loc[i] = (arrow_loc[i][0]-95, arrow_loc[i][1]+25)
         
 def ini_loc():
     ini_arrow_loc()
     yes_no_btn()
-            
+
+def yes_no_ai():
+    global election_ch
+    for i in range(player_num):
+        if i == human_player:
+            continue
+        elif i in [president, chancellor]:
+            election_ch[i] = 1
+        #TBD
+    
 def main():
     global player_role, mode, player_name_list, president, chancellor, human_player
     
@@ -412,6 +423,8 @@ def main():
                 screen.blit(write(u"%s 代表，您是否贊成 %s 當總統以及 %s 當院長？"%(player_name_list[human_player], player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
                 draw_button(yes_btn_loc[human_player],u"同意", yes_btn)
                 draw_button(no_btn_loc[human_player],u"否決", no_btn)
+        elif 4 == mode:
+            yes_no_ai()
         # Test location
         #for i in range(player_num):
         #    screen.blit(yes_btn, yes_btn_loc[i])
@@ -431,6 +444,15 @@ def main():
                             chancellor = i
                             mode = 4
                             break
+                    break
+                elif 3 == mode:
+                    (MouseX, MouseY) = pygame.mouse.get_pos()
+                    if yes_btn_loc[human_player][0] <= MouseX <= yes_btn_loc[human_player][0]+yes_btn.get_width() and yes_btn_loc[human_player][1] <= MouseY <= yes_btn_loc[human_player][1]+yes_btn.get_height():
+                        election_ch[human_player] = 1
+                        mode = 4
+                    elif no_btn_loc[human_player][0] <= MouseX <= no_btn_loc[human_player][0]+no_btn.get_width() and no_btn_loc[human_player][1] <= MouseY <= no_btn_loc[human_player][1]+no_btn.get_height():
+                        election_ch[human_player] = 0
+                        mode = 4
                     break
                         
     pygame.quit()
