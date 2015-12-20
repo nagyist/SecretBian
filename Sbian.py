@@ -77,6 +77,17 @@ p8_loc  = (990, 0)
 p9_loc  = (1360, 190)
 p10_loc = (1360, 490)
 
+r1_loc  = (920, 655)
+r2_loc  = (620, 655)
+r3_loc  = (320, 655)
+r4_loc  = (0, 435)
+r5_loc  = (0, 135)
+r6_loc  = (320, 0)
+r7_loc  = (620, 0)
+r8_loc  = (920, 0)
+r9_loc  = (1340, 135)
+r10_loc = (1340, 435)
+
 status_loc = (390, 250)
 
 player_num = 10
@@ -95,6 +106,7 @@ mode = 0
 party_score = []
 player_name_list = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
 player_name_loc  = [p1_loc, p2_loc, p3_loc, p4_loc, p5_loc, p6_loc, p7_loc, p8_loc, p9_loc, p10_loc]
+role_loc  = [r1_loc, r2_loc, r3_loc, r4_loc, r5_loc, r6_loc, r7_loc, r8_loc, r9_loc, r10_loc]
 player_role = [0] * player_num
 arrow_loc = list(player_name_loc)
 yes_btn_loc = [0] * player_num
@@ -178,11 +190,30 @@ def draw_blue_table():
 def draw_policy_table():
     draw_blue_table()
     draw_green_table()
-            
-def draw_player_name():
-    global player_name_list, president, chancellor
 
+def role_to_image(rid):
+    if 0 == rid:
+        return blue_flag_s
+    elif 1 == rid:
+        return green_flag_s
+    elif 2 == rid:
+        return bian
+    
+def draw_player_name():
+    global player_name_list, president, chancellor, player_role
+
+    # if human role is green party
+    if 1 == player_role[human_player]:
+        show_green_party = 1
+    else:
+        show_green_party = 0
+    
     for i in range(player_num):
+        if i == human_player:
+            screen.blit(role_to_image(player_role[i]), role_loc[i])
+        elif 1 == show_green_party and 1 == player_role[i]:
+            screen.blit(role_to_image(player_role[i]), role_loc[i])
+    
         if i == president:
             if 0 <= president <= 2 or 5 <= president <= 7:
                 screen.blit(write(player_name_list[i]+u" 總統", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
@@ -352,6 +383,11 @@ def main():
                     # 0 == blue party
                     player_role[player_ini_role[i]] = 0
                 party_score.append([0]*player_num)
+            for i in player_ini_role[1:4]:
+                for j in player_ini_role[1:4]:
+                    if i == j:
+                        continue
+                    party_score[i][j] = -60
             first = 0
         if 0 == mode:
             president = random.randint(0, player_num-1)
