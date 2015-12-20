@@ -100,6 +100,7 @@ human_player = -1
 #mode == 2, for human select chancellor.
 #mode == 3, for computer select chancellor.
 #mode == 4, president and chancellor candidate is done.
+#mode == 5, election result
 mode = 0
 
 #positive: blue party, negative: green party
@@ -107,6 +108,7 @@ party_score = []
 player_name_list = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
 player_name_loc  = [p1_loc, p2_loc, p3_loc, p4_loc, p5_loc, p6_loc, p7_loc, p8_loc, p9_loc, p10_loc]
 role_loc  = [r1_loc, r2_loc, r3_loc, r4_loc, r5_loc, r6_loc, r7_loc, r8_loc, r9_loc, r10_loc]
+# 2: bian, 1: green, 0:blue
 player_role = [0] * player_num
 arrow_loc = list(player_name_loc)
 yes_btn_loc = [0] * player_num
@@ -360,14 +362,108 @@ def ini_loc():
     ini_arrow_loc()
     yes_no_btn()
 
-def yes_no_ai():
+def yes_no_ai(i, role):
+    
+    score = 0
+    ele = 0
+    
+    # if blue
+    if 0 == role:
+        b = 1
+        g = 0
+    # if green
+    else:
+        b = 0
+        g = 1
+    
+    if party_score[i][president] >= 2:
+        score += 2
+    elif party_score[i][president] <= -2:
+        score -= 2
+    else:
+        score += party_score[i][president]
+        
+    if party_score[i][chancellor] >= 2:
+        score += 2
+    elif party_score[i][chancellor] <= -2:
+        score -= 2
+    else:
+        score += party_score[i][chancellor]   
+    
+    r = random.randint(1, 16)
+    if score >= 4:
+        ele = b
+    elif 3 == score:
+        if r > 1:
+            ele = b
+        else:
+            ele = g
+    elif 2 == score:
+        if r > 2:
+            ele = b
+        else:
+            ele = g
+    elif 1 == score:
+        if r > 4:
+            ele = b
+        else:
+            ele = g
+    elif 0 == score:
+        if r > 8:
+            ele = b
+        else:
+            ele = g
+    elif -1 == score:
+        if r > 12:
+            ele = b
+        else:
+            ele = g
+    elif -2 == score:
+        if r > 14:
+            ele = b
+        else:
+            ele = g
+    elif -3 == score:
+        if r > 15:
+            ele = b
+        else:
+            ele = g
+    elif -4 <= score:
+        ele = g
+    
+    return ele
+    
+def election_ai():
     global election_ch
+    
+    score = 0
+    
     for i in range(player_num):
         if i == human_player:
             continue
         elif i in [president, chancellor]:
             election_ch[i] = 1
-        #TBD
+        else:
+            election_ch[i] = yes_no_ai(i, player_role[i])
+
+def election_result():
+    global election_ch
+    
+    y_num = 0
+    n_num = 0
+    
+    for i in range(player_num):
+        if 1 == election_ch[i]:
+            screen.blit(write(u"同意", BLACK, 20), arrow_loc[i])
+            y_num += 1
+        else:
+            screen.blit(write(u"否決", RED, 20), arrow_loc[i])
+            n_num += 1
+            
+    if y_num > n_num:
+        screen.blit(write(u"同意：%d票，否決：%d票， %s 當總統， %s 當院長，通過"%(y_num, n_num, player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
+    else:
+        screen.blit(write(u"同意：%d票，否決：%d票，政治協商破局"%(y_num, n_num), BLACK, 20), status_loc)
     
 def main():
     global player_role, mode, player_name_list, president, chancellor, human_player
@@ -423,8 +519,13 @@ def main():
                 screen.blit(write(u"%s 代表，您是否贊成 %s 當總統以及 %s 當院長？"%(player_name_list[human_player], player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
                 draw_button(yes_btn_loc[human_player],u"同意", yes_btn)
                 draw_button(no_btn_loc[human_player],u"否決", no_btn)
+            else:
+                mode = 4
         elif 4 == mode:
-            yes_no_ai()
+            election_ai()
+            mode = 5
+        elif 5 == mode:
+            election_result()
         # Test location
         #for i in range(player_num):
         #    screen.blit(yes_btn, yes_btn_loc[i])
