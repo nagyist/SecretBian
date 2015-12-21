@@ -103,7 +103,7 @@ po10_loc = [(1190, 355), (1190, 430), (1190, 505)]
 status_loc = (390, 250)
 
 player_num = 10
-policy_card_num = 3
+policy_card_ini_num = 3
 president = -1
 chancellor = -1
 pre_president = -1
@@ -118,6 +118,8 @@ mode = 0
 
 #positive: blue party, negative: green party
 party_score = []
+# 0: blue policy, 1: green policy, blue : green = 5 : 6
+policy_card_box = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
 policy_card_loc = [po1_loc, po2_loc, po3_loc, po4_loc, po5_loc, po6_loc, po7_loc, po8_loc, po9_loc, po10_loc]
 player_name_list = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
 player_name_loc  = [p1_loc, p2_loc, p3_loc, p4_loc, p5_loc, p6_loc, p7_loc, p8_loc, p9_loc, p10_loc]
