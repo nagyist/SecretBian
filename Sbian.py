@@ -100,15 +100,19 @@ po8_loc  = [(850, 60), (950, 60), (1050, 60)  ]
 po9_loc  = [(1190, 130), (1190, 205), (1190, 280)]
 po10_loc = [(1190, 355), (1190, 430), (1190, 505)]
 
-status_loc = (390, 250)
+status_loc   = (390, 250)
+broken_loc   = (650, 330)
+b_status_loc = (650, 435)
 
 player_num = 10
 policy_card_ini_num = 3
+broken_num = 0
 president = -1
 chancellor = -1
 pre_president = -1
 pre_chancellor = -1
 human_player = -1
+already_set_broken = 0
 #mode == 0, ini. mode == 1, after select president candidate
 #mode == 2, for human select chancellor.
 #mode == 3, for computer select chancellor.
@@ -463,7 +467,7 @@ def election_ai():
             election_ch[i] = yes_no_ai(i, player_role[i])
 
 def election_result():
-    global election_ch
+    global election_ch, broken_num, already_set_broken
     
     y_num = 0
     n_num = 0
@@ -478,8 +482,22 @@ def election_result():
             
     if y_num > n_num:
         screen.blit(write(u"同意：%d票，否決：%d票， %s 當總統， %s 當院長，通過"%(y_num, n_num, player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
+        if 0 == already_set_broken:
+            broken_num = 0
+            already_set_broken = 1
     else:
         screen.blit(write(u"同意：%d票，否決：%d票，政治協商破局"%(y_num, n_num), BLACK, 20), status_loc)
+        if 0 == already_set_broken:
+            broken_num += 1
+            already_set_broken = 1
+            
+    draw_button(b_status_loc,u"繼續", yes_btn)
+    
+def draw_broken():
+    global broken_num
+    
+    if broken_num > 0:
+        screen.blit(write(u"破局 %d 次"%broken_num, BLACK, 20), broken_loc)
     
 def main():
     global player_role, mode, player_name_list, president, chancellor, human_player
@@ -528,6 +546,7 @@ def main():
         fill_background()
         draw_policy_table()
         draw_player_name()
+        draw_broken()
         if 2 == mode:
             draw_select_chancellor()
         elif 3 == mode:
