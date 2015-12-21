@@ -88,9 +88,22 @@ r8_loc  = (920, 0)
 r9_loc  = (1340, 135)
 r10_loc = (1340, 435)
 
+#id 0~2, left to right or up to down
+po1_loc  = [(850, 550), (950, 550), (1050, 550)]
+po2_loc  = [(550, 550), (650, 550), (750, 550)]
+po3_loc  = [(250, 550), (350, 550), (450, 550)]
+po4_loc  = [(100, 355), (100, 430), (100, 505)]
+po5_loc  = [(100, 130), (100, 205), (100, 280)]
+po6_loc  = [(250, 60), (350, 60), (450, 60)   ]
+po7_loc  = [(550, 60), (650, 60), (750, 60)   ]
+po8_loc  = [(850, 60), (950, 60), (1050, 60)  ]
+po9_loc  = [(1190, 130), (1190, 205), (1190, 280)]
+po10_loc = [(1190, 355), (1190, 430), (1190, 505)]
+
 status_loc = (390, 250)
 
 player_num = 10
+policy_card_num = 3
 president = -1
 chancellor = -1
 pre_president = -1
@@ -105,6 +118,7 @@ mode = 0
 
 #positive: blue party, negative: green party
 party_score = []
+policy_card_loc = [po1_loc, po2_loc, po3_loc, po4_loc, po5_loc, po6_loc, po7_loc, po8_loc, po9_loc, po10_loc]
 player_name_list = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
 player_name_loc  = [p1_loc, p2_loc, p3_loc, p4_loc, p5_loc, p6_loc, p7_loc, p8_loc, p9_loc, p10_loc]
 role_loc  = [r1_loc, r2_loc, r3_loc, r4_loc, r5_loc, r6_loc, r7_loc, r8_loc, r9_loc, r10_loc]
@@ -531,6 +545,11 @@ def main():
         #    screen.blit(yes_btn, yes_btn_loc[i])
         #    screen.blit(no_btn, no_btn_loc[i])
         # End test location
+        # Test policy card
+        #for i in range(player_num):
+        #    for j in range(policy_card_num):
+        #        screen.blit(green_flag, policy_card_loc[i][j])
+        # End test policy card
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
