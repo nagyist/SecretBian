@@ -116,6 +116,8 @@ pre_chancellor = -1
 human_player = -2
 already_set_broken = 0
 broken_current = 0
+#0: blue, 1: green, -1: None policy(ini)
+policy_current = -1
 #mode == 0, ini. mode == 1, after select president candidate
 #mode == 2, for human select chancellor.
 #mode == 3, for computer select chancellor.
@@ -564,6 +566,8 @@ def chancellor_enact_ai():
                 out_select = i
                 
     out[out_select] = 1
+    
+    enact_policy_from_policy_card()
 
 def policy_card_id_to_image(id):
     if 0 == policy_card_box[id]:
@@ -608,9 +612,17 @@ def chancellor_enact_human():
     screen.blit(write(u"%s 院長，您要排除哪個政策？"%player_name_list[chancellor], BLACK, 20), status_loc)
     
     draw_policy()
+
+def enact_policy_from_policy_card():
+    global policy_card_box, out, policy_current
+    
+    for i in range(policy_card_ini_num):
+        if 0 == out[i]:
+            policy_current = policy_card_box[i]
+            break
     
 def main():
-    global player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current
+    global player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num
     
     first = 1
     # index 0: bian, 1~3: green party, 4~9: blue party
@@ -733,7 +745,12 @@ def main():
                 elif 5 == mode:
                     (MouseX, MouseY) = pygame.mouse.get_pos()
                     if b_status_loc[0] <= MouseX <= b_status_loc[0] + yes_btn.get_width() and b_status_loc[1] <= MouseY <= b_status_loc[1] + yes_btn.get_height():
-                        if 0 == broken_current:
+                        if 3 == broken_num:
+                            broken_num = 0
+                            broken_current = 0
+                            policy_current = policy_card_box[0]
+                            mode = 10
+                        elif 0 == broken_current:
                             if president == human_player:
                                 mode = 6
                             else: #ai
@@ -748,7 +765,9 @@ def main():
                         if policy_card_loc[human_player][i][0] <= mouseX <= policy_card_loc[human_player][i][0]+policy_card_id_to_image(i).get_width() and policy_card_loc[human_player][i][1] <= mouseY <= policy_card_loc[human_player][i][1]+policy_card_id_to_image(i).get_height():
                             out[i] = 1
                             mode = 9
-                            
+                            break
+                    break
+                    
                 elif 8 == mode:
                     i = 0
     
@@ -759,8 +778,12 @@ def main():
                             continue
                         elif policy_card_loc[human_player][i][0] <= mouseX <= policy_card_loc[human_player][i][0]+policy_card_id_to_image(j).get_width() and policy_card_loc[human_player][i][1] <= mouseY <= policy_card_loc[human_player][i][1]+policy_card_id_to_image(j).get_height():
                             out[j] = 1
+                            enact_policy_from_policy_card()
                             mode = 10
+                            break
                         i += 1
+                    break
+                    
     pygame.quit()
     quit()
 
