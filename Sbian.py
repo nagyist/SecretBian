@@ -2,6 +2,7 @@
 import time
 import threading
 import pygame
+import mythread
 from sys import exit
 
 screen_width = 1400
@@ -104,9 +105,14 @@ status_loc   = (390, 250)
 broken_loc   = (650, 330)
 b_status_loc = (650, 435)
 
+draw_policy_thread = mythread.mythread(1, screen, blue_flag, green_flag)
+
 player_num = 10
 policy_card_ini_num = 3
 broken_num = 0
+green_policy_num = 0
+blue_policy_num = 0
+already_set_policy_num = 0
 # 2: double score, 1: single
 double_s = 1
 president = -1
@@ -175,7 +181,7 @@ def draw_green_table():
     (mid_w, mid_h) = (screen_width/2, screen_height/2)
     x = mid_w + policy_interval_gap - 1
     y = mid_h - green_flag.get_height() - 1
-    
+
     #row line
     for i in range(0, row_num):
         pygame.draw.line(screen, BLACK, (x, y + i*(green_flag.get_height()+1)), (x + 3*(green_flag.get_width()+1), y + i*(green_flag.get_height()+1)), width)
@@ -208,7 +214,7 @@ def draw_blue_table():
     (mid_w, mid_h) = (screen_width/2, screen_height/2)
     x = mid_w - policy_interval_gap - 3*(blue_flag.get_width() + 1)
     y = mid_h - blue_flag.get_height() - 1
-    
+
     #row line
     for i in range(0, row_num-1):
         pygame.draw.line(screen, BLACK, (x, y + i*(blue_flag.get_height()+1)), (x + 3*(blue_flag.get_width()+1), y + i*(blue_flag.get_height()+1)), width)
@@ -622,7 +628,7 @@ def enact_policy_from_policy_card():
             break
     
 def main():
-    global player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num
+    global player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num
     
     first = 1
     # index 0: bian, 1~3: green party, 4~9: blue party
@@ -631,6 +637,7 @@ def main():
     random.shuffle(player_name_list)
     ini_loc()
     human_player = findhp(player_name_list)
+    draw_policy_thread.start()
     
     while True:
         if 1 == first:
@@ -651,6 +658,8 @@ def main():
                     if i == j:
                         continue
                     party_score[i][j] = -60
+            green_policy_num = 0
+            blue_policy_num = 0
             first = 0
         if 0 == mode:
             if -1 == president:
@@ -663,6 +672,8 @@ def main():
             out = [0] * policy_card_ini_num
             double_s = 1
             broken_current = 0
+            already_set_broken = 0
+            already_set_policy_num = 0
             
             #president = human_player #For test only
             mode = 1
@@ -706,8 +717,19 @@ def main():
             chancellor_enact_ai()
             mode = 10
         elif 10 == mode:
-            pre_president = president
-            pre_chancellor = chancellor
+            if 0 == already_set_policy_num:
+                pre_president = president
+                pre_chancellor = chancellor
+                already_set_policy_num = 1
+                # if blue
+                if 0 == policy_current:
+                    p_num = blue_policy_num
+                    blue_policy_num += 1
+                # else green
+                else:
+                    p_num = green_policy_num
+                    green_policy_num += 1
+            draw_policy_thread.run(policy_current, p_num)
         # Test location
         #for i in range(player_num):
         #    screen.blit(yes_btn, yes_btn_loc[i])
