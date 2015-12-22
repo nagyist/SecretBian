@@ -105,7 +105,7 @@ status_loc   = (390, 250)
 broken_loc   = (650, 330)
 b_status_loc = (650, 435)
 
-draw_policy_thread = mythread.mythread(1, screen, blue_flag, green_flag)
+draw_policy_thread = mythread.mythread(1, screen, blue_flag_image, green_flag_image)
 
 player_num = 10
 policy_card_ini_num = 3
@@ -626,9 +626,36 @@ def enact_policy_from_policy_card():
         if 0 == out[i]:
             policy_current = policy_card_box[i]
             break
+
+def draw_blue_policy(policy_num):
+    if policy_num < 1:
+        return
+    for i in range(policy_num):
+        screen.blit(blue_flag, mythread.b_loc[i])
+
+def draw_green_policy(policy_num):
+    if policy_num < 1:
+        return
+    for i in range(policy_num):
+        screen.blit(green_flag, mythread.g_loc[i])
+            
+def draw_all_policy():
+    global blue_policy_num, green_policy_num
     
+    if 255 == draw_policy_thread.img_alpha:
+        draw_blue_policy(blue_policy_num)
+        draw_green_policy(green_policy_num)
+    else:
+        # new policy is blue
+        if 0 == policy_current:
+            draw_blue_policy(blue_policy_num-1)
+            draw_green_policy(green_policy_num)
+        else:
+            draw_blue_policy(blue_policy_num)
+            draw_green_policy(green_policy_num-1)
+            
 def main():
-    global player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num
+    global player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num, blue_policy_num, green_policy_num
     
     first = 1
     # index 0: bian, 1~3: green party, 4~9: blue party
@@ -674,6 +701,7 @@ def main():
             broken_current = 0
             already_set_broken = 0
             already_set_policy_num = 0
+            draw_policy_thread.party = -1
             
             #president = human_player #For test only
             mode = 1
@@ -689,6 +717,8 @@ def main():
         draw_policy_table()
         draw_player_name()
         draw_broken()
+        draw_all_policy()
+        draw_policy_thread.run()
         if 2 == mode:
             draw_select_chancellor()
         elif 3 == mode:
@@ -729,7 +759,10 @@ def main():
                 else:
                     p_num = green_policy_num
                     green_policy_num += 1
-            draw_policy_thread.run(policy_current, p_num)
+                draw_policy_thread.img_alpha = 0
+                draw_policy_thread.party = policy_current
+                draw_policy_thread.index = p_num
+                
         # Test location
         #for i in range(player_num):
         #    screen.blit(yes_btn, yes_btn_loc[i])
@@ -740,7 +773,9 @@ def main():
         #    for j in range(policy_card_num):
         #        screen.blit(green_flag, policy_card_loc[i][j])
         # End test policy card
+        
         pygame.display.update()
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
