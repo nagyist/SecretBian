@@ -10,8 +10,8 @@ class mythread (threading.Thread):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.surface = surface
-        self.b_img = b_img_name
-        self.g_img = g_img_name
+        self.b_img = pygame.image.load(b_img_name).convert()
+        self.g_img = pygame.image.load(g_img_name).convert()
         self.img_alpha = 0
         #party, 0:blue, 1:green, -1: ini
         self.party = -1
@@ -25,11 +25,11 @@ class mythread (threading.Thread):
         
         # if party == blue
         if 0 == self.party:
-            new_policy_img = pygame.image.load(self.b_img).convert()
+            new_policy_img = self.b_img
             loc = b_loc[self.index]
         # else party == green
         else:
-            new_policy_img = pygame.image.load(self.g_img).convert()
+            new_policy_img = self.g_img
             loc = g_loc[self.index]
             
         if self.img_alpha < 255:
