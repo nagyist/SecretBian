@@ -136,7 +136,7 @@ policy_current = -1
 #mode ==10, enact policy result
 #mode ==11, president power, human president
 #mode ==12, president power, computer president
-#mode ==13, final result
+#mode ==69, final result
 mode = 0
 
 #positive: blue party, negative: green party
@@ -301,7 +301,7 @@ def id_to_arrow_alpha_image(id):
         return right_arrow2        
             
 def draw_select_chancellor():
-    screen.blit(write(u"%s 總統，您要選誰當院長呢？"%p1, BLACK, 20), status_loc)
+    screen.blit(write(u"%s 總統，您要選誰擔任院長呢？"%p1, BLACK, 20), status_loc)
     
     (MouseX, MouseY) = pygame.mouse.get_pos()
     
@@ -502,7 +502,7 @@ def election_result():
             n_num += 1
             
     if y_num > n_num:
-        screen.blit(write(u"同意：%d票，否決：%d票， %s 當總統， %s 當院長，通過"%(y_num, n_num, player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
+        screen.blit(write(u"同意：%d票，否決：%d票， %s 就任總統， %s 就任院長，通過"%(y_num, n_num, player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
         if 0 == already_set_broken:
             broken_num = 0
             broken_current = 0
@@ -723,7 +723,7 @@ def main():
             draw_select_chancellor()
         elif 3 == mode:
             if human_player != president and human_player != chancellor:
-                screen.blit(write(u"%s 代表，您是否贊成 %s 當總統以及 %s 當院長？"%(player_name_list[human_player], player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
+                screen.blit(write(u"%s 代表，您是否贊成 %s 擔任總統以及 %s 擔任院長？"%(player_name_list[human_player], player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
                 draw_button(yes_btn_loc[human_player],u"同意", yes_btn)
                 draw_button(no_btn_loc[human_player],u"否決", no_btn)
             else:
@@ -754,15 +754,23 @@ def main():
                 # if blue
                 if 0 == policy_current:
                     p_num = blue_policy_num
+                    policy_text = u"藍營"
                     blue_policy_num += 1
                 # else green
                 else:
                     p_num = green_policy_num
+                    policy_text = u"綠營"
                     green_policy_num += 1
                 draw_policy_thread.img_alpha = 0
                 draw_policy_thread.party = policy_current
                 draw_policy_thread.index = p_num
-                
+            
+            if 3 == broken_num:
+                screen.blit(write(u"政治協商破局 %d 次，強制立法。 %s 法案通過"%(broken_num, policy_text), BLACK, 20), status_loc)
+            else:
+                screen.blit(write(u" %s 法案通過"%policy_text, BLACK, 20), status_loc)
+            draw_button(b_status_loc,u"繼續", yes_btn)
+            
         # Test location
         #for i in range(player_num):
         #    screen.blit(yes_btn, yes_btn_loc[i])
@@ -803,11 +811,11 @@ def main():
                     (MouseX, MouseY) = pygame.mouse.get_pos()
                     if b_status_loc[0] <= MouseX <= b_status_loc[0] + yes_btn.get_width() and b_status_loc[1] <= MouseY <= b_status_loc[1] + yes_btn.get_height():
                         if 3 == broken_num:
-                            broken_num = 0
                             broken_current = 0
                             policy_current = policy_card_box[0]
                             mode = 10
                         elif 0 == broken_current:
+                            broken_num = 0
                             if president == human_player:
                                 mode = 6
                             else: #ai
@@ -840,6 +848,20 @@ def main():
                             break
                         i += 1
                     break
+                elif 10 == mode:
+                    (MouseX, MouseY) = pygame.mouse.get_pos()
+                    if b_status_loc[0] <= MouseX <= b_status_loc[0] + yes_btn.get_width() and b_status_loc[1] <= MouseY <= b_status_loc[1] + yes_btn.get_height():
+                        broken_num = 0
+                        if 5 == blue_policy_num or 6 == green_policy_num:
+                            mode = 69
+                        # if green policy and green policy number > 2
+                        elif 1 == policy_current and green_policy_num > 2:
+                            if president == human_player:
+                                mode = 11
+                            else:
+                                mode = 12
+                        else:
+                            mode = 0
                     
     pygame.quit()
     quit()
