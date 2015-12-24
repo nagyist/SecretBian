@@ -653,7 +653,39 @@ def draw_all_policy():
         else:
             draw_blue_policy(blue_policy_num)
             draw_green_policy(green_policy_num-1)
+
+def draw_arrow_except_president():
+    
+    (MouseX, MouseY) = pygame.mouse.get_pos()
+    
+    for i in range(player_num):
+        if i == president:
+            continue
+        if arrow_loc[i][0] <= MouseX <= arrow_loc[i][0] + id_to_arrow_image(i).get_width() and arrow_loc[i][1] <= MouseY <= arrow_loc[i][1] + id_to_arrow_image(i).get_height():
+            screen.blit(id_to_arrow_image(i), arrow_loc[i])
+        else:
+            screen.blit(id_to_arrow_alpha_image(i), arrow_loc[i])
             
+def human_kill():
+    global p1
+
+    screen.blit(write(u"%s 總統，您要暗殺誰呢？"%p1, BLACK, 20), status_loc)
+    
+    draw_arrow_except_president()
+
+def human_investigate():
+    global p1
+    
+    screen.blit(write(u"%s 總統，您要調查誰呢？"%p1, BLACK, 20), status_loc)
+    
+    draw_arrow_except_president()
+
+def human_president_power():
+    if 3 == green_policy_num or 5 == green_policy_num:
+        human_kill()
+    elif 4 == green_policy_num:
+        human_investigate()
+    
 def main():
     global player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num, blue_policy_num, green_policy_num
     
@@ -770,6 +802,8 @@ def main():
             else:
                 screen.blit(write(u" %s 法案通過"%policy_text, BLACK, 20), status_loc)
             draw_button(b_status_loc,u"繼續", yes_btn)
+        elif 11 == mode:
+            human_president_power()
             
         # Test location
         #for i in range(player_num):
