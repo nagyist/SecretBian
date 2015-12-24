@@ -23,6 +23,7 @@ up_arrow_image = 'Image/arrow_30x30.gif'
 yes_btn_image = 'Image/button1_100x50.gif'
 no_btn_image = 'Image/button2_100x50.gif'
 bian_image = 'Image/bian_60x45.jpg'
+dead_image = 'Image/dead_31x30.gif'
 
 background = pygame.image.load(background_image_filename).convert()
 blue_flag  = pygame.image.load(blue_flag_image).convert()
@@ -35,6 +36,7 @@ bian = pygame.image.load(bian_image).convert()
 up_arrow = pygame.image.load(up_arrow_image).convert()
 yes_btn = pygame.image.load(yes_btn_image).convert()
 no_btn = pygame.image.load(no_btn_image).convert()
+dead = pygame.image.load(dead_image).convert()
 
 blue_flag_s = pygame.transform.scale(blue_flag, (60, 45))
 green_flag_s = pygame.transform.scale(green_flag, (60, 45))
@@ -156,6 +158,7 @@ no_btn_loc = [0] * player_num
 election_ch = [0] * player_num
 #1 : policy out, 0: NOT out
 out = [0] * policy_card_ini_num
+player_live = [1] * player_num
 
 BLACK = (0, 0, 0)
 BLUE = (0, 0, 255)
@@ -254,6 +257,9 @@ def draw_player_name():
         show_green_party = 0
     
     for i in range(player_num):
+        if 0 == player_live[i]:
+            screen.blit(dead, arrow_loc[i])
+    
         if i == human_player:
             screen.blit(role_to_image(player_role[i]), role_loc[i])
         elif 1 == show_green_party and 1 == player_role[i]:
@@ -687,7 +693,7 @@ def human_president_power():
         human_investigate()
     
 def main():
-    global player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num, blue_policy_num, green_policy_num
+    global player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num, blue_policy_num, green_policy_num, player_live
     
     first = 1
     # index 0: bian, 1~3: green party, 4~9: blue party
@@ -719,7 +725,12 @@ def main():
                     party_score[i][j] = -60
             green_policy_num = 0
             blue_policy_num = 0
+            player_live = [1] * player_num
+            # Test player_live
+            # player_live = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            # End test player_live
             first = 0
+            
         if 0 == mode:
             if -1 == president:
                 president = random.randint(0, player_num-1)
