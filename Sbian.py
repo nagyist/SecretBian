@@ -140,7 +140,7 @@ policy_current = -1
 #mode ==10, enact policy result
 #mode ==11, president power, human president
 #mode ==12, president power, computer president
-#mode ==13, kill part 2
+#mode ==13, check if bian
 #mode ==14, kill part 3
 #mode ==15, investigation result
 #mode ==69, final result
@@ -661,7 +661,7 @@ def draw_green_policy(policy_num):
         screen.blit(green_flag, mythread.g_loc[i])
             
 def draw_all_policy():
-    global blue_policy_num, green_policy_num
+    global blue_policy_num, green_policy_num, draw_policy_thread
     
     if 255 == draw_policy_thread.img_alpha:
         draw_blue_policy(blue_policy_num)
@@ -687,10 +687,10 @@ def draw_arrow_except_president():
         else:
             screen.blit(id_to_arrow_alpha_image(i), arrow_loc[i])
 
-def kill_part2():
+def check_if_bian():
     global kill_player
     
-    screen.blit(write(u" %s ，是扁維拉？"%player_name_list[kill_player], BLACK, 20), yes_btn_loc[president])
+    screen.blit(write(u" %s ，您是扁維拉麼？"%player_name_list[kill_player], BLACK, 20), yes_btn_loc[president])
     if 2 == player_role[kill_player]:
         screen.blit(write(u"正是", BLACK, 20), arrow_loc[kill_player])
     else:
@@ -699,7 +699,7 @@ def kill_part2():
 def kill_part3():
     global kill_player
     
-    screen.blit(write(u" %s ，受死吧！"%player_name_list[kill_player], BLACK, 20), yes_btn_loc[president])
+    screen.blit(write(u" %s ，受死吧！砰砰！"%player_name_list[kill_player], BLACK, 20), yes_btn_loc[president])
     screen.blit(write(u"嗚…", BLACK, 20), arrow_loc[kill_player])
             
 def human_kill():
@@ -780,6 +780,7 @@ def main():
             kill_player = -1
             already_set_broken = 0
             already_set_policy_num = 0
+            draw_policy_thread.img_alpha = 255
             draw_policy_thread.party = -1
             
             #president = human_player #For test only
