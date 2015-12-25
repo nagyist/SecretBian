@@ -124,6 +124,8 @@ pre_chancellor = -1
 human_player = -2
 already_set_broken = 0
 broken_current = 0
+kill_player = -1
+inv_player = -1
 #0: blue, 1: green, -1: None policy(ini)
 policy_current = -1
 #mode == 0, ini. mode == 1, after select president candidate
@@ -138,6 +140,9 @@ policy_current = -1
 #mode ==10, enact policy result
 #mode ==11, president power, human president
 #mode ==12, president power, computer president
+#mode ==13, kill part 2
+#mode ==14, kill part 3
+#mode ==15, investigation result
 #mode ==69, final result
 mode = 0
 
@@ -681,6 +686,21 @@ def draw_arrow_except_president():
             screen.blit(id_to_arrow_image(i), arrow_loc[i])
         else:
             screen.blit(id_to_arrow_alpha_image(i), arrow_loc[i])
+
+def kill_part2():
+    global kill_player
+    
+    screen.blit(write(u" %s ，是扁維拉？"%player_name_list[kill_player], BLACK, 20), yes_btn_loc[president])
+    if 2 == player_role[kill_player]:
+        screen.blit(write(u"正是", BLACK, 20), arrow_loc[kill_player])
+    else:
+        screen.blit(write(u"不是", BLACK, 20), arrow_loc[kill_player])
+
+def kill_part3():
+    global kill_player
+    
+    screen.blit(write(u" %s ，受死吧！"%player_name_list[kill_player], BLACK, 20), yes_btn_loc[president])
+    screen.blit(write(u"嗚…", BLACK, 20), arrow_loc[kill_player])
             
 def human_kill():
     global p1
@@ -703,7 +723,7 @@ def human_president_power():
         human_investigate()
     
 def main():
-    global player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num, blue_policy_num, green_policy_num, player_live
+    global player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num, blue_policy_num, green_policy_num, player_live, kill_player, inv_player
     
     first = 1
     # index 0: bian, 1~3: green party, 4~9: blue party
@@ -735,6 +755,7 @@ def main():
                     party_score[i][j] = -60
             green_policy_num = 0
             blue_policy_num = 0
+            inv_player = -1
             player_live = [1] * player_num
             # Test player_live
             # player_live = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -756,6 +777,7 @@ def main():
             out = [0] * policy_card_ini_num
             double_s = 1
             broken_current = 0
+            kill_player = -1
             already_set_broken = 0
             already_set_policy_num = 0
             draw_policy_thread.party = -1
@@ -928,6 +950,19 @@ def main():
                                 mode = 12
                         else:
                             mode = 0
+                elif 11 == mode:
+                    (MouseX, MouseY) = pygame.mouse.get_pos()
+                    
+                    for i in range(player_num):
+                        if i == president or 0 == player_live[i]:
+                            continue
+                    if arrow_loc[i][0] <= MouseX <= arrow_loc[i][0] + id_to_arrow_image(i).get_width() and arrow_loc[i][1] <= MouseY <= arrow_loc[i][1] + id_to_arrow_image(i).get_height():
+                        if 3 == green_policy_num or 5 == green_policy_num:
+                            kill_player = i
+                            mode = 13
+                        elif 4 == green_policy_num:
+                            inv_player = i
+                            mode = 15
                     
     pygame.quit()
     quit()
