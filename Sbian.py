@@ -761,7 +761,33 @@ def ai_president_power():
         ai_kill()
     elif 4 == green_policy_num:
         ai_investigate()
+
+def final_result():
     
+    if 0 == player_live[human_player]:
+        player_result = u"玩家此局已經死亡…"
+    elif 1 == victory_result or 2 == victory_result:
+        if 0 == player_role[human_player]:
+            player_result = u"玩家獲勝！"
+        else:
+            player_result = u"玩家失敗！"
+    else: # victory_result == 3 or 4
+        if 0 == player_role[human_player]:
+            player_result = u"玩家失敗！"
+        else:
+            player_result = u"玩家獲勝！"
+            
+    if 1 == victory_result:
+        screen.blit(write(u"扁維拉已死，藍營勝利。%s"%player_result, BLACK, 20), status_loc)
+    elif 2 == victory_result:
+        screen.blit(write(u"藍營勝利。%s"%player_result, BLACK, 20), status_loc)
+    elif 3 == victory_result:
+        screen.blit(write(u"扁維拉獲得院長提名，綠營勝利。%s"%player_result, BLACK, 20), status_loc)
+    elif 4 == victory_result:
+        screen.blit(write(u"綠營勝利。%s"%player_result, BLACK, 20), status_loc)
+        
+    draw_button(b_status_loc,u"重新開始", yes_btn)
+        
 def main():
     global p1, player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num, blue_policy_num, green_policy_num, player_live, kill_player, inv_player, victory_result, human_inv
     
@@ -917,6 +943,8 @@ def main():
             draw_button(b_status_loc,u"繼續", yes_btn)
         elif 17 == mode:
             check_if_bian(chancellor)
+        elif 69 == mode:
+            final_result()
         # Test location
         #for i in range(player_num):
         #    screen.blit(yes_btn, yes_btn_loc[i])
@@ -1063,6 +1091,11 @@ def main():
                             mode = 16
                         else:
                             mode = 3
+                elif 69 == mode:
+                    (MouseX, MouseY) = pygame.mouse.get_pos()
+                    if b_status_loc[0] <= MouseX <= b_status_loc[0] + yes_btn.get_width() and b_status_loc[1] <= MouseY <= b_status_loc[1] + yes_btn.get_height():
+                        first = 1
+                        mode = 0
                     
     pygame.quit()
     quit()
