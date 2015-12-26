@@ -171,6 +171,7 @@ no_btn_loc = [0] * player_num
 election_ch = [0] * player_num
 #1 : policy out, 0: NOT out
 out = [0] * policy_card_ini_num
+# 1: live, 0: dead
 player_live = [1] * player_num
 
 BLACK = (0, 0, 0)
@@ -749,18 +750,63 @@ def human_president_power():
         human_investigate()
 
 def ai_kill():
-    pass
-
+    global kill_player
+    
+    score = 0
+    kill_list = []
+    
+    for i in range(player_num):
+        if i == president:
+            continue
+        elif 0 == player_live[i]:
+            continue
+        else:
+            kill_list.append(i)
+            
+            #else if president is blue
+            if 0 == player_role[i]:
+                if party_score[president][i] < score:
+                    score = party_score[president][i]
+                    kill_player = i
+            
+            #else if president is green
+            else:
+                if party_score[president][i] > score:
+                    score = party_score[president][i]
+                    kill_player = i
+            
+    if -1 == kill_player:
+        random.shuffle(kill_list)
+        kill_player = kill_list[0]
+            
 def ai_investigate():
-    pass
-        
+    global inv_player
+
+    inv_list = []
+    
+    for i in range(player_num):
+        if i == president:
+            continue
+        elif 0 == player_live[i]:
+            continue
+        elif 1 == player_role[president] and 1 == player_role[i]:
+            continue
+        else:
+            inv_list.append(i)
+    
+    random.shuffle(inv_list)
+    
+    inv_player = inv_list[0]
+    
 def ai_president_power():
     global mode
 
     if 3 == green_policy_num or 5 == green_policy_num:
         ai_kill()
+        mode = 13
     elif 4 == green_policy_num:
         ai_investigate()
+        mode = 15
 
 def final_result():
     
@@ -782,7 +828,7 @@ def final_result():
     elif 2 == victory_result:
         screen.blit(write(u"藍營勝利。%s"%player_result, BLACK, 20), status_loc)
     elif 3 == victory_result:
-        screen.blit(write(u"扁維拉獲得院長提名，綠營勝利。%s"%player_result, BLACK, 20), status_loc)
+        screen.blit(write(u"扁維拉獲得提名為院長，綠營勝利。%s"%player_result, BLACK, 20), status_loc)
     elif 4 == victory_result:
         screen.blit(write(u"綠營勝利。%s"%player_result, BLACK, 20), status_loc)
         
@@ -1066,9 +1112,11 @@ def main():
                     (MouseX, MouseY) = pygame.mouse.get_pos()
                     if b_status_loc[0] <= MouseX <= b_status_loc[0] + yes_btn.get_width() and b_status_loc[1] <= MouseY <= b_status_loc[1] + yes_btn.get_height():
                         if 2 == player_role[kill_player]:
+                            player_live[kill_player] = 0
                             victory_result = 1
                             mode = 69
                         else:
+                            player_live[kill_player] = 0
                             mode = 0
                 elif 15 == mode:
                     (MouseX, MouseY) = pygame.mouse.get_pos()
