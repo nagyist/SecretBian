@@ -165,6 +165,7 @@ role_loc  = [r1_loc, r2_loc, r3_loc, r4_loc, r5_loc, r6_loc, r7_loc, r8_loc, r9_
 # 2: bian, 1: green, 0:blue
 player_role = [0] * player_num
 arrow_loc = list(player_name_loc)
+talk_loc = [0] * player_num
 yes_btn_loc = [0] * player_num
 no_btn_loc = [0] * player_num
 #1: Accepted, 0: No
@@ -433,15 +434,19 @@ def yes_no_btn():
         if 0 <= i <= 2:
             yes_btn_loc[i] = (arrow_loc[i][0]-100, arrow_loc[i][1]-30)
             no_btn_loc[i] = (arrow_loc[i][0]+25, arrow_loc[i][1]-30)
+            talk_loc[i] = (arrow_loc[i][0]-100, arrow_loc[i][1]-30)
         elif 3 <= i <= 4:
             yes_btn_loc[i] = (arrow_loc[i][0]+20, arrow_loc[i][1]-50)
             no_btn_loc[i] = (arrow_loc[i][0]+20, arrow_loc[i][1]+25)
+            talk_loc[i] = (arrow_loc[i][0]+20, arrow_loc[i][1]-15)
         elif 5 <= i <= 7:
             yes_btn_loc[i] = (arrow_loc[i][0]-100, arrow_loc[i][1]+30)
             no_btn_loc[i] = (arrow_loc[i][0]+25, arrow_loc[i][1]+30)
+            talk_loc[i] = (arrow_loc[i][0]-100, arrow_loc[i][1]+30)
         elif 8 <= i <= 9:
             yes_btn_loc[i] = (arrow_loc[i][0]-95, arrow_loc[i][1]-50)
             no_btn_loc[i] = (arrow_loc[i][0]-95, arrow_loc[i][1]+25)
+            talk_loc[i] = (arrow_loc[i][0]-200, arrow_loc[i][1]+15)
         
 def ini_loc():
     ini_arrow_loc()
@@ -524,10 +529,12 @@ def election_ai():
     score = 0
     
     for i in range(player_num):
-        if i == human_player or 0 == player_live[i]:
+        if 0 == player_live[i]:
             continue
         elif i in [president, chancellor]:
             election_ch[i] = 1
+        elif i == human_player:
+            continue
         else:
             election_ch[i] = yes_no_ai(i, player_role[i])
 
@@ -715,7 +722,7 @@ def draw_arrow_except_president():
 def check_if_bian(pl):
     global not_bian
     
-    screen.blit(write(u" %s ，您是扁維拉麼？"%player_name_list[pl], BLACK, 20), yes_btn_loc[president])
+    screen.blit(write(u" %s ，您是扁維拉麼？"%player_name_list[pl], BLACK, 20), talk_loc[president])
     if 2 == player_role[pl]:
         screen.blit(write(u"正是", RED, 20), arrow_loc[pl])
     else:
@@ -727,7 +734,7 @@ def check_if_bian(pl):
 def kill_part3():
     global kill_player
     
-    screen.blit(write(u" %s ，受死吧！砰砰！"%player_name_list[kill_player], BLACK, 20), yes_btn_loc[president])
+    screen.blit(write(u" %s ，受死吧！砰砰！"%player_name_list[kill_player], BLACK, 20), talk_loc[president])
     screen.blit(write(u"嗚…", BLACK, 20), arrow_loc[kill_player])
     
     draw_button(b_status_loc,u"繼續", yes_btn)
