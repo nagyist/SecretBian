@@ -857,7 +857,7 @@ def final_result():
     draw_button(b_status_loc,u"重新開始", yes_btn)
         
 def main():
-    global p1, player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num, blue_policy_num, green_policy_num, player_live, kill_player, inv_player, victory_result, human_inv, know_bian, not_bian
+    global p1, player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num, blue_policy_num, green_policy_num, player_live, kill_player, inv_player, victory_result, human_inv, know_bian, not_bian, party_score, election_ch, double_s
     
     first = 1
     # index 0: bian, 1~3: green party, 4~9: blue party
@@ -871,6 +871,7 @@ def main():
     while True:
         if 1 == first:
             random.shuffle(player_ini_role)
+            party_score = []
             for i in range(player_num):
                 if 0 == i:
                     # 2 == bian role
@@ -892,6 +893,9 @@ def main():
             inv_player = -1
             human_inv = -1
             victory_result = 0
+            pre_president = -1
+            pre_chancellor = -1
+            broken_num = 0
             player_live = [1] * player_num
             know_bian = [-2] * player_num
             not_bian = [-1] * player_num
@@ -913,9 +917,11 @@ def main():
             
             random.shuffle(policy_card_box)
             out = [0] * policy_card_ini_num
+            election_ch = [0] * player_num
             double_s = 1
             broken_current = 0
             kill_player = -1
+            policy_current = -1
             already_set_broken = 0
             already_set_policy_num = 0
             draw_policy_thread.img_alpha = 255
