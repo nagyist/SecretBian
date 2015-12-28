@@ -785,8 +785,8 @@ def ai_kill():
         else:
             kill_list.append(i)
             
-            #else if president is blue
-            if 0 == player_role[i]:
+            #if president is blue
+            if 0 == player_role[president]:
                 if party_score[president][i] < score:
                     score = party_score[president][i]
                     kill_player = i
