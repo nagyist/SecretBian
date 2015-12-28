@@ -1120,7 +1120,6 @@ def main():
                 elif 10 == mode:
                     (MouseX, MouseY) = pygame.mouse.get_pos()
                     if b_status_loc[0] <= MouseX <= b_status_loc[0] + yes_btn.get_width() and b_status_loc[1] <= MouseY <= b_status_loc[1] + yes_btn.get_height():
-                        broken_num = 0
                         if 5 == blue_policy_num:
                             victory_result = 2
                             mode = 69
@@ -1129,12 +1128,15 @@ def main():
                             mode = 69
                         # if green policy and green policy number > 2
                         elif 1 == policy_current and green_policy_num > 2:
-                            if president == human_player:
+                            if 3 == broken_num:
+                                mode = 0
+                            elif president == human_player:
                                 mode = 11
                             else:
                                 mode = 12
                         else:
                             mode = 0
+                        broken_num = 0
                 elif 11 == mode:
                     (MouseX, MouseY) = pygame.mouse.get_pos()
                     
