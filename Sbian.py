@@ -115,8 +115,8 @@ broken_num = 0
 green_policy_num = 0
 blue_policy_num = 0
 already_set_policy_num = 0
-# 2: double score, 0: ini
-double_s = 0
+# 3: triple score, 0: ini
+triple_s = 0
 president = -1
 chancellor = -1
 pre_president = -1
@@ -576,7 +576,7 @@ def draw_broken():
         screen.blit(write(u"破局 %d 次"%broken_num, BLACK, 20), broken_loc)
 
 def president_enact_ai():
-    global out, double_s
+    global out, triple_s
     
     g_num = 0
     b_num = 0
@@ -603,7 +603,7 @@ def president_enact_ai():
             g_num += 1
     
     if 1 == b_num and 1 == g_num:
-        double_s = 2
+        triple_s = 3
 
 def chancellor_enact_ai():
     global out
@@ -857,7 +857,7 @@ def final_result():
     draw_button(b_status_loc,u"重新開始", yes_btn)
         
 def main():
-    global p1, player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num, blue_policy_num, green_policy_num, player_live, kill_player, inv_player, victory_result, human_inv, know_bian, not_bian, party_score, election_ch, double_s
+    global p1, player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num, blue_policy_num, green_policy_num, player_live, kill_player, inv_player, victory_result, human_inv, know_bian, not_bian, party_score, election_ch, triple_s
     
     first = 1
     # index 0: bian, 1~3: green party, 4~9: blue party
@@ -918,7 +918,7 @@ def main():
             random.shuffle(policy_card_box)
             out = [0] * policy_card_ini_num
             election_ch = [0] * player_num
-            double_s = 0
+            triple_s = 0
             broken_current = 0
             kill_player = -1
             policy_current = -1
@@ -1001,7 +1001,7 @@ def main():
                     if human_player == i:
                         continue
                     elif president == i:
-                        party_score[i][chancellor] += (p_score*double_s)
+                        party_score[i][chancellor] += (p_score*triple_s)
                     elif chancellor == i:
                         continue
                     else:
