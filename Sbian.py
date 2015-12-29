@@ -115,8 +115,8 @@ broken_num = 0
 green_policy_num = 0
 blue_policy_num = 0
 already_set_policy_num = 0
-# 2: double score, 1: single
-double_s = 1
+# 2: double score, 0: ini
+double_s = 0
 president = -1
 chancellor = -1
 pre_president = -1
@@ -918,7 +918,7 @@ def main():
             random.shuffle(policy_card_box)
             out = [0] * policy_card_ini_num
             election_ch = [0] * player_num
-            double_s = 1
+            double_s = 0
             broken_current = 0
             kill_player = -1
             policy_current = -1
