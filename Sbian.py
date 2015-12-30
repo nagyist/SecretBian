@@ -109,6 +109,8 @@ b_status_loc = (650, 435)
 
 draw_policy_thread = mythread.mythread(1, screen, blue_flag_image, green_flag_image)
 
+green_win_num = 0
+blue_win_num = 0
 player_num = 10
 policy_card_ini_num = 3
 broken_num = 0
@@ -121,6 +123,7 @@ president = -1
 chancellor = -1
 pre_president = -1
 pre_chancellor = -1
+# -2, ini, No human. 0~9, human player id
 human_player = -2
 already_set_broken = 0
 broken_current = 0
@@ -142,7 +145,7 @@ policy_current = -1
 #mode == 6, select policy, human president
 #mode == 7, select policy, computer president
 #mode == 8, select policy, human chancellor
-#mode == 9, select policy, computer president
+#mode == 9, select policy, computer chancellor
 #mode ==10, enact policy result
 #mode ==11, president power, human president
 #mode ==12, president power, computer president
@@ -156,8 +159,8 @@ mode = 0
 
 #positive: blue party, negative: green party
 party_score = []
-# 0: blue policy, 1: green policy, blue : green = 5 : 6
-policy_card_box = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+# 0: blue policy, 1: green policy, blue : green = 10 : 19
+policy_card_box = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 policy_card_loc = [po1_loc, po2_loc, po3_loc, po4_loc, po5_loc, po6_loc, po7_loc, po8_loc, po9_loc, po10_loc]
 player_name_list = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
 player_name_loc  = [p1_loc, p2_loc, p3_loc, p4_loc, p5_loc, p6_loc, p7_loc, p8_loc, p9_loc, p10_loc]
@@ -570,10 +573,17 @@ def election_result():
     draw_button(b_status_loc,u"繼續", yes_btn)
     
 def draw_broken():
-    global broken_num
+    global broken_num, green_win_num, blue_win_num
     
     if broken_num > 0:
         screen.blit(write(u"破局 %d 次"%broken_num, BLACK, 20), broken_loc)
+    
+    if -2 == human_player:
+        (gx, gy) = (broken_loc[0], broken_loc[1]-40)
+        (bx, by) = (broken_loc[0], broken_loc[1]+40)
+    
+        screen.blit(write(u"綠營勝%d次"%green_win_num, BLACK, 20), (gx, gy))
+        screen.blit(write(u"藍營勝%d次"%blue_win_num, BLUE, 20), (bx, by))
 
 def president_enact_ai():
     global out, triple_s
@@ -831,6 +841,7 @@ def ai_president_power():
         mode = 15
 
 def final_result():
+    global green_win_num, blue_win_num
     
     if 0 == player_live[human_player]:
         player_result = u"玩家此局已經死亡…"
@@ -847,12 +858,16 @@ def final_result():
             
     if 1 == victory_result:
         screen.blit(write(u"扁維拉已死，藍營勝利。%s"%player_result, BLACK, 20), status_loc)
+        blue_win_num += 1
     elif 2 == victory_result:
         screen.blit(write(u"藍營勝利。%s"%player_result, BLACK, 20), status_loc)
+        blue_win_num += 1
     elif 3 == victory_result:
         screen.blit(write(u"扁維拉獲得提名為院長，綠營勝利。%s"%player_result, BLACK, 20), status_loc)
+        green_win_num += 1
     elif 4 == victory_result:
         screen.blit(write(u"綠營勝利。%s"%player_result, BLACK, 20), status_loc)
+        green_win_num += 1
         
     draw_button(b_status_loc,u"重新開始", yes_btn)
         
@@ -867,6 +882,8 @@ def main():
     ini_loc()
     human_player = findhp(player_name_list)
     draw_policy_thread.start()
+    
+    #human_player = -2 # test NO human
     
     while True:
         if 1 == first:
@@ -948,10 +965,12 @@ def main():
         draw_policy_thread.run()
         if 2 == mode:
             draw_select_chancellor()
-        elif 3 == mode:
+        if 3 == mode:
             # Note: If human player is dead, human player will NOT be president candidate 
             if human_player != president and human_player != chancellor:
-                if 0 == player_live[human_player]:
+                if -2 == human_player:
+                    mode = 4
+                elif 0 == player_live[human_player]:
                     mode = 4
                 else:
                     screen.blit(write(u"%s 代表，您是否贊成 %s 擔任總統以及 %s 擔任院長？"%(player_name_list[human_player], player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
@@ -961,26 +980,26 @@ def main():
                 mode = 16
             else:
                 mode = 4
-        elif 4 == mode:
+        if 4 == mode:
             election_ai()
             mode = 5
-        elif 5 == mode:
+        if 5 == mode:
             election_result()
         # Note: If human player is dead, human player will NOT be president candidate 
-        elif 6 == mode:
+        if 6 == mode:
             president_enact_human()
-        elif 7 == mode:
+        if 7 == mode:
             president_enact_ai()
             if chancellor == human_player:
                 mode = 8
             else:
                 mode = 9
-        elif 8 == mode:
+        if 8 == mode:
             chancellor_enact_human()
-        elif 9 == mode:
+        if 9 == mode:
             chancellor_enact_ai()
             mode = 10
-        elif 10 == mode:
+        if 10 == mode:
             if 0 == already_set_policy_num:
                 pre_president = president
                 pre_chancellor = chancellor
@@ -1017,23 +1036,23 @@ def main():
             else:
                 screen.blit(write(u" %s 法案通過"%policy_text, BLACK, 20), status_loc)
             draw_button(b_status_loc,u"繼續", yes_btn)
-        elif 11 == mode:
+        if 11 == mode:
             human_president_power()
-        elif 12 == mode:
+        if 12 == mode:
             # ai_president_power will set next mode
             ai_president_power()
-        elif 13 == mode:
+        if 13 == mode:
             check_if_bian(kill_player)
-        elif 14 == mode:
+        if 14 == mode:
             kill_part3()
-        elif 15 == mode:
+        if 15 == mode:
             investigation_part2()
-        elif 16 == mode:
+        if 16 == mode:
             screen.blit(write(u" %s ，您被選為院長候選人，將投同意票。"%p1, BLACK, 20), status_loc)
             draw_button(b_status_loc,u"繼續", yes_btn)
-        elif 17 == mode:
+        if 17 == mode:
             check_if_bian(chancellor)
-        elif 69 == mode:
+        if 69 == mode:
             final_result()
         # Test location
         #for i in range(player_num):
@@ -1047,6 +1066,75 @@ def main():
         # End test policy card
         
         pygame.display.update()
+        
+        if -2 == human_player:
+            if 5 == mode:
+                if 3 == broken_num:
+                    broken_current = 0
+                    policy_current = policy_card_box[0]
+                    mode = 10
+                elif 0 == broken_current:
+                    broken_num = 0
+                    if president == human_player:
+                        mode = 6
+                    else: #ai
+                        mode = 7
+                else: #broken
+                    mode = 0
+            elif 10 == mode:
+                if 5 == blue_policy_num:
+                    victory_result = 2
+                    mode = 69
+                elif 6 == green_policy_num:
+                    victory_result = 4
+                    mode = 69
+                # if green policy and green policy number > 2
+                elif 1 == policy_current and green_policy_num > 2:
+                    if 3 == broken_num:
+                        mode = 0
+                    elif president == human_player:
+                        mode = 11
+                    else:
+                        mode = 12
+                else:
+                    mode = 0
+                broken_num = 0
+            elif 13 == mode:
+                    mode = 14
+            elif 14 == mode:
+                if 2 == player_role[kill_player]:
+                    player_live[kill_player] = 0
+                    victory_result = 1
+                    mode = 69
+                else:
+                    player_live[kill_player] = 0
+                    mode = 0
+            elif 15 == mode:
+                if president != human_player:
+                    if 0 == player_role[inv_player]:
+                        # Due to party_score is high. When knower is green, it almost impossible to be chancellor candidate for AI
+                        party_score[president][inv_player] += 60
+                    else:
+                        party_score[president][inv_player] -= 60
+                        if 1 == player_role[president]:
+                            know_bian[president] = inv_player
+                mode = 0
+            elif 17 == mode:
+                # check green policy >= 4, before
+                if 2 == player_role[chancellor]:
+                    victory_result = 3
+                    mode = 69
+                elif president == human_player:
+                    mode = 4
+                elif chancellor == human_player:
+                    mode = 16
+                else:
+                    mode = 3
+            elif 69 == mode:
+                first = 1
+                mode = 0
+        
+        print(mode)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1137,6 +1225,7 @@ def main():
                         else:
                             mode = 0
                         broken_num = 0
+                    break
                 elif 11 == mode:
                     (MouseX, MouseY) = pygame.mouse.get_pos()
                     
@@ -1150,10 +1239,13 @@ def main():
                             elif 4 == green_policy_num:
                                 inv_player = i
                                 mode = 15
+                                
+                    break
                 elif 13 == mode:
                     (MouseX, MouseY) = pygame.mouse.get_pos()
                     if b_status_loc[0] <= MouseX <= b_status_loc[0] + yes_btn.get_width() and b_status_loc[1] <= MouseY <= b_status_loc[1] + yes_btn.get_height():
                         mode = 14
+                    break
                 elif 14 == mode:
                     (MouseX, MouseY) = pygame.mouse.get_pos()
                     if b_status_loc[0] <= MouseX <= b_status_loc[0] + yes_btn.get_width() and b_status_loc[1] <= MouseY <= b_status_loc[1] + yes_btn.get_height():
@@ -1164,6 +1256,7 @@ def main():
                         else:
                             player_live[kill_player] = 0
                             mode = 0
+                    break
                 elif 15 == mode:
                     (MouseX, MouseY) = pygame.mouse.get_pos()
                     if b_status_loc[0] <= MouseX <= b_status_loc[0] + yes_btn.get_width() and b_status_loc[1] <= MouseY <= b_status_loc[1] + yes_btn.get_height():
@@ -1176,10 +1269,12 @@ def main():
                                 if 1 == player_role[president]:
                                     know_bian[president] = inv_player
                         mode = 0
+                    break
                 elif 16 == mode:
                     (MouseX, MouseY) = pygame.mouse.get_pos()
                     if b_status_loc[0] <= MouseX <= b_status_loc[0] + yes_btn.get_width() and b_status_loc[1] <= MouseY <= b_status_loc[1] + yes_btn.get_height():
                         mode = 4
+                    break
                 elif 17 == mode:
                     (MouseX, MouseY) = pygame.mouse.get_pos()
                     if b_status_loc[0] <= MouseX <= b_status_loc[0] + yes_btn.get_width() and b_status_loc[1] <= MouseY <= b_status_loc[1] + yes_btn.get_height():
@@ -1193,11 +1288,13 @@ def main():
                             mode = 16
                         else:
                             mode = 3
+                    break
                 elif 69 == mode:
                     (MouseX, MouseY) = pygame.mouse.get_pos()
                     if b_status_loc[0] <= MouseX <= b_status_loc[0] + yes_btn.get_width() and b_status_loc[1] <= MouseY <= b_status_loc[1] + yes_btn.get_height():
                         first = 1
                         mode = 0
+                    break
                     
     pygame.quit()
     quit()
