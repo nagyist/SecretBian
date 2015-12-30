@@ -1134,8 +1134,6 @@ def main():
                 first = 1
                 mode = 0
         
-        print(mode)
-        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
