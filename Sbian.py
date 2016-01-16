@@ -374,13 +374,33 @@ def select_chancellor_ai():
     elif know_bian[president] >= 0:
         return know_bian[president]
     # if green party
-    else:
+    elif 1 == player_role[president]:
         for i in range(player_num):
             if 0 == player_live[i]:
                 continue
             if i in [president, pre_president, pre_chancellor]:
                 continue
             elif green_policy_num >= 4 and 1 == not_bian[i]:
+                continue
+            # green can know green
+            elif green_policy_num >= 4 and 1 == player_role[i]:
+                continue
+            elif party_score[president][i] > 1:
+                continue
+            elif 1 == party_score[president][i]:
+                candidate.append(i)
+            elif 0 == party_score[president][i]:
+                candidate.extend([i]*3)
+            elif -1 == party_score[president][i]:
+                candidate.extend([i]*9)
+            else: # party_score[i] < -1
+                candidate.extend([i]*27)
+    # if bian
+    else:
+        for i in range(player_num):
+            if 0 == player_live[i]:
+                continue
+            if i in [president, pre_president, pre_chancellor]:
                 continue
             elif party_score[president][i] > 1:
                 continue
