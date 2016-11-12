@@ -160,7 +160,7 @@ setup(name="name",
       # windows subsystem executables (no console)
       windows=[ {
             "script": "Sbian.py",
-            "icon_resources": [(1, "Sbian_default.ico")]
+            "icon_resources": [(1, "g_vs_d.ico")]
         }],
 
       # py2exe options

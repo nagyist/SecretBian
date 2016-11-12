@@ -12,7 +12,7 @@ arrow_alpha = 100
 
 pygame.init()
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption('Secret Bian')
+pygame.display.set_caption('Secret Trump')
 
 background_image_filename = 'Image/Nostalgy.gif'
 #blue_flag_image = 'Image/blue_flag_100x75.jpg'
@@ -24,7 +24,7 @@ investigation_image = 'Image/investigation_100x75.png'
 up_arrow_image = 'Image/arrow_30x30.gif'
 yes_btn_image = 'Image/button1_100x50.gif'
 no_btn_image = 'Image/button2_100x50.gif'
-bian_image = 'Image/bian_60x45.jpg'
+bian_image = 'Image/t_60x45.jpg'
 dead_image = 'Image/dead_31x30.gif'
 
 background = pygame.image.load(background_image_filename).convert()
@@ -604,8 +604,8 @@ def draw_broken():
         (gx, gy) = (broken_loc[0], broken_loc[1]-40)
         (bx, by) = (broken_loc[0], broken_loc[1]+40)
     
-        screen.blit(write(u"綠營勝%d次"%green_win_num, BLACK, 20), (gx, gy))
-        screen.blit(write(u"藍營勝%d次"%blue_win_num, BLUE, 20), (bx, by))
+        screen.blit(write(u"共和黨勝%d次"%green_win_num, BLACK, 20), (gx, gy))
+        screen.blit(write(u"民主黨勝%d次"%blue_win_num, BLUE, 20), (bx, by))
 
 def president_enact_ai():
     global out, triple_s
@@ -754,7 +754,7 @@ def draw_arrow_except_president():
 def check_if_bian(pl):
     global not_bian
     
-    screen.blit(write(u" %s ，您是扁維拉麼？"%player_name_list[pl], BLACK, 20), talk_loc[president])
+    screen.blit(write(u" %s ，您是D.T.麼？"%player_name_list[pl], BLACK, 20), talk_loc[president])
     if 2 == player_role[pl]:
         screen.blit(write(u"正是", RED, 20), arrow_loc[pl])
     else:
@@ -879,16 +879,16 @@ def final_result():
             player_result = u"玩家獲勝！"
             
     if 1 == victory_result:
-        screen.blit(write(u"扁維拉已死，藍營勝利。%s"%player_result, BLACK, 20), status_loc)
+        screen.blit(write(u"D.T. is dead，Democratic Party win the game. %s"%player_result, BLACK, 20), status_loc)
         blue_win_num += 1
     elif 2 == victory_result:
-        screen.blit(write(u"藍營勝利。%s"%player_result, BLACK, 20), status_loc)
+        screen.blit(write(u"Democratic Party win the game. %s"%player_result, BLACK, 20), status_loc)
         blue_win_num += 1
     elif 3 == victory_result:
-        screen.blit(write(u"扁維拉獲得提名為院長，綠營勝利。%s"%player_result, BLACK, 20), status_loc)
+        screen.blit(write(u"D.T.獲得提名為院長，Republican Party win the game. %s"%player_result, BLACK, 20), status_loc)
         green_win_num += 1
     elif 4 == victory_result:
-        screen.blit(write(u"綠營勝利。%s"%player_result, BLACK, 20), status_loc)
+        screen.blit(write(u"Republican Party win the game. %s"%player_result, BLACK, 20), status_loc)
         green_win_num += 1
         
     draw_button(b_status_loc,u"重新開始", yes_btn)
@@ -932,6 +932,10 @@ def main():
             inv_player = -1
             human_inv = -1
             victory_result = 0
+            # Test victory_result
+            #victory_result = 1
+            #mode = 69
+            
             pre_president = -1
             pre_chancellor = -1
             broken_num = 0
@@ -1032,13 +1036,13 @@ def main():
                 if 0 == policy_current:
                     p_score = 1
                     p_num = blue_policy_num
-                    policy_text = u"藍營"
+                    policy_text = u"民主黨"
                     blue_policy_num += 1
                 # else green
                 else:
                     p_score = -1
                     p_num = green_policy_num
-                    policy_text = u"綠營"
+                    policy_text = u"共和黨"
                     green_policy_num += 1
                 
                 for i in range(player_num):
