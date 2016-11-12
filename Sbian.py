@@ -15,8 +15,10 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Secret Bian')
 
 background_image_filename = 'Image/Nostalgy.gif'
-blue_flag_image = 'Image/blue_flag_100x75.jpg'
-green_flag_image = 'Image/green_flag_100x75.jpg'
+#blue_flag_image = 'Image/blue_flag_100x75.jpg'
+blue_flag_image = 'Image/d_100x75.jpg'
+#green_flag_image = 'Image/green_flag_100x75.jpg'
+green_flag_image = 'Image/g_100x75.jpg'
 bullet_image = 'Image/bullet__100x75.jpg'
 investigation_image = 'Image/investigation_100x75.png'
 up_arrow_image = 'Image/arrow_30x30.gif'
@@ -58,16 +60,16 @@ green_flag_alpha.set_alpha(policy_alpha)
 bullet_alpha.set_alpha(policy_alpha)
 investigation_alpha.set_alpha(policy_alpha)
 
-p1  = u"小鷹"
-p2  = u"小賣"
-p3  = u"小熊"
-p4  = u"小倉"
-p5  = u"小力"
-p6  = u"小站"
-p7  = u"小魚"
-p8  = u"小鯨"
-p9  = u"小冏"
-p10 = u"小牆"
+p1  = "P1"
+p2  = "P2"
+p3  = "P3"
+p4  = "P4"
+p5  = "P5"
+p6  = "P6"
+p7  = "P7"
+p8  = "P8"
+p9  = "P9"
+p10 = "P10"
 
 p1_loc  = (990, 675)
 p2_loc  = (690, 675)
@@ -312,7 +314,7 @@ def draw_player_name():
 # find human player
 def findhp(pnlist):
     for i in range(player_num):
-        if pnlist[i] == u"小鷹":
+        if pnlist[i] == "P1":
             return i
 
 def id_to_arrow_image(id):
@@ -934,6 +936,9 @@ def main():
             pre_chancellor = -1
             broken_num = 0
             player_live = [1] * player_num
+            # Test human player is dead
+            #player_live[human_player] = 0
+            
             know_bian = [-2] * player_num
             not_bian = [-1] * player_num
             # Test player_live
