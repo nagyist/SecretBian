@@ -170,6 +170,8 @@ role_loc  = [r1_loc, r2_loc, r3_loc, r4_loc, r5_loc, r6_loc, r7_loc, r8_loc, r9_
 # 2: bian, 1: green, 0:blue
 player_role = [0] * player_num
 arrow_loc = list(player_name_loc)
+ele_rsult_loc = []
+
 talk_loc = [0] * player_num
 yes_btn_loc = [0] * player_num
 no_btn_loc = [0] * player_num
@@ -298,16 +300,16 @@ def draw_player_name():
             
         if i == president:
             if 0 <= president <= 2 or 5 <= president <= 7:
-                screen.blit(write(player_name_list[i]+u" 總統", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
+                screen.blit(write(player_name_list[i]+" president", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
             else:
                 screen.blit(write(player_name_list[i], BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
-                screen.blit(write(u"總統", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]+20))
+                screen.blit(write("President", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]+20))
         elif i == chancellor:
             if 0 <= chancellor <= 2 or 5 <= chancellor <= 7:
-                screen.blit(write(player_name_list[i]+u" 院長", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
+                screen.blit(write(player_name_list[i]+" chancellor", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
             else:
                 screen.blit(write(player_name_list[i], BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
-                screen.blit(write(u"院長", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]+20))
+                screen.blit(write("Chancellor", BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]+20))
         else:
             screen.blit(write(player_name_list[i], BLACK, 20), (player_name_loc[i][0], player_name_loc[i][1]))
 
@@ -338,7 +340,7 @@ def id_to_arrow_alpha_image(id):
         return right_arrow2        
             
 def draw_select_chancellor():
-    screen.blit(write(u"%s 總統，您要選誰擔任院長呢？"%p1, BLACK, 20), status_loc)
+    screen.blit(write("%s president，who is the chancellor？"%p1, BLACK, 20), status_loc)
     
     (MouseX, MouseY) = pygame.mouse.get_pos()
     
@@ -444,7 +446,7 @@ def ini_arrow_loc():
 def draw_button(loc, str, image = yes_btn, size = 16):
     (mouseX, mouseY) = pygame.mouse.get_pos()
         
-    fontx = loc[0]+ 47 - int(len(str)/2*12)
+    fontx = loc[0]+ 47 - int(len(str)/2*6)
     fonty = loc[1]+15
     screen.blit(image, loc)
     if loc[0] <= mouseX <= loc[0]+image.get_width() and loc[1] <= mouseY <= loc[1]+image.get_height():
@@ -474,7 +476,15 @@ def yes_no_btn():
             talk_loc[i] = (arrow_loc[i][0]-200, arrow_loc[i][1]+15)
         
 def ini_loc():
+
+    global ele_rsult_loc
+    
     ini_arrow_loc()
+    
+    ele_rsult_loc = list(arrow_loc)
+    ele_rsult_loc[8] = (1300, 250)
+    ele_rsult_loc[9] = (1300, 550)
+    
     yes_no_btn()
 
 def yes_no_ai(i, role):
@@ -573,39 +583,39 @@ def election_result():
         if 0 == player_live[i]:
             continue
         if 1 == election_ch[i]:
-            screen.blit(write(u"同意", BLACK, 20), arrow_loc[i])
+            screen.blit(write("Accepted", BLACK, 20), ele_rsult_loc[i])
             y_num += 1
         else:
-            screen.blit(write(u"否決", RED, 20), arrow_loc[i])
+            screen.blit(write("Deny", RED, 20), ele_rsult_loc[i])
             n_num += 1
             
     if y_num > n_num:
-        screen.blit(write(u"同意：%d票，否決：%d票， %s 就任總統， %s 就任院長，通過"%(y_num, n_num, player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
+        screen.blit(write("Accepted: %d tickets, Deny: %d tickets, congratulations! %s is president, %s is chancellor."%(y_num, n_num, player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
         if 0 == already_set_broken:
             broken_num = 0
             broken_current = 0
             already_set_broken = 1
     else:
-        screen.blit(write(u"同意：%d票，否決：%d票，政治協商破局"%(y_num, n_num), BLACK, 20), status_loc)
+        screen.blit(write("Accepted: %d tickets, Deny: %d tickets, negotiation broke down"%(y_num, n_num), BLACK, 20), status_loc)
         if 0 == already_set_broken:
             broken_num += 1
             broken_current = 1
             already_set_broken = 1
             
-    draw_button(b_status_loc,u"繼續", yes_btn)
+    draw_button(b_status_loc,"continue", yes_btn)
     
 def draw_broken():
     global broken_num, green_win_num, blue_win_num
     
     if broken_num > 0:
-        screen.blit(write(u"破局 %d 次"%broken_num, BLACK, 20), broken_loc)
+        screen.blit(write("broken %d times"%broken_num, BLACK, 20), broken_loc)
     
     if -2 == human_player:
         (gx, gy) = (broken_loc[0], broken_loc[1]-40)
         (bx, by) = (broken_loc[0], broken_loc[1]+40)
     
-        screen.blit(write(u"共和黨勝%d次"%green_win_num, BLACK, 20), (gx, gy))
-        screen.blit(write(u"民主黨勝%d次"%blue_win_num, BLUE, 20), (bx, by))
+        screen.blit(write("Republican Party win %d times"%green_win_num, BLACK, 20), (gx, gy))
+        screen.blit(write("Democratic Party win %d times"%blue_win_num, BLUE, 20), (bx, by))
 
 def president_enact_ai():
     global out, triple_s
@@ -695,12 +705,12 @@ def draw_policy():
             i += 1
     
 def president_enact_human():
-    screen.blit(write(u"%s 總統，您要排除哪個政策？"%player_name_list[president], BLACK, 20), status_loc)
+    screen.blit(write("%s president, what policy do you want to block?"%player_name_list[president], BLACK, 20), status_loc)
     
     draw_policy()
 
 def chancellor_enact_human():
-    screen.blit(write(u"%s 院長，您要排除哪個政策？"%player_name_list[chancellor], BLACK, 20), status_loc)
+    screen.blit(write("%s chancellor, what policy do you want to block?"%player_name_list[chancellor], BLACK, 20), status_loc)
     
     draw_policy()
 
@@ -754,34 +764,34 @@ def draw_arrow_except_president():
 def check_if_bian(pl):
     global not_bian
     
-    screen.blit(write(u" %s ，您是D.T.麼？"%player_name_list[pl], BLACK, 20), talk_loc[president])
+    screen.blit(write(" %s ,Are you D.T. ?"%player_name_list[pl], BLACK, 20), talk_loc[president])
     if 2 == player_role[pl]:
-        screen.blit(write(u"正是", RED, 20), arrow_loc[pl])
+        screen.blit(write("Yes", RED, 20), arrow_loc[pl])
     else:
-        screen.blit(write(u"不是", RED, 20), arrow_loc[pl])
+        screen.blit(write("No", RED, 20), arrow_loc[pl])
         not_bian[pl] = 1
         
-    draw_button(b_status_loc,u"繼續", yes_btn)
+    draw_button(b_status_loc,"Continue", yes_btn)
 
 def kill_part3():
     global kill_player
     
-    screen.blit(write(u" %s ，受死吧！砰砰！"%player_name_list[kill_player], BLACK, 20), talk_loc[president])
-    screen.blit(write(u"嗚…", BLACK, 20), arrow_loc[kill_player])
+    screen.blit(write(" %s , bang bang!!! R.I.P."%player_name_list[kill_player], BLACK, 20), talk_loc[president])
+    screen.blit(write("Oh …", BLACK, 20), arrow_loc[kill_player])
     
-    draw_button(b_status_loc,u"繼續", yes_btn)
+    draw_button(b_status_loc,"continue", yes_btn)
             
 def human_kill():
     global p1
 
-    screen.blit(write(u"%s 總統，您要暗殺誰呢？"%p1, BLACK, 20), status_loc)
+    screen.blit(write("%s president, who do you want to kill?"%p1, BLACK, 20), status_loc)
     
     draw_arrow_except_president()
 
 def human_investigate():
     global p1
     
-    screen.blit(write(u"%s 總統，您要調查誰呢？"%p1, BLACK, 20), status_loc)
+    screen.blit(write("%s president, who do you want to investigate?"%p1, BLACK, 20), status_loc)
     
     draw_arrow_except_president()
 
@@ -791,9 +801,9 @@ def investigation_part2():
     if human_player == president:
         human_inv = inv_player
     
-    screen.blit(write(u"%s 總統，進行調查 %s 的黨派？"%(player_name_list[president], player_name_list[inv_player]), BLACK, 20), status_loc)
+    screen.blit(write("%s president, investigate the party for %s "%(player_name_list[president], player_name_list[inv_player]), BLACK, 20), status_loc)
      
-    draw_button(b_status_loc,u"繼續", yes_btn)
+    draw_button(b_status_loc,"continue", yes_btn)
     
 def human_president_power():
     if 3 == green_policy_num or 5 == green_policy_num:
@@ -866,32 +876,32 @@ def final_result():
     global green_win_num, blue_win_num
     
     if 0 == player_live[human_player]:
-        player_result = u"玩家此局已經死亡…"
+        player_result = "Player is dead …"
     elif 1 == victory_result or 2 == victory_result:
         if 0 == player_role[human_player]:
-            player_result = u"玩家獲勝！"
+            player_result = "Player is winner!"
         else:
-            player_result = u"玩家失敗！"
+            player_result = "Player is loser!"
     else: # victory_result == 3 or 4
         if 0 == player_role[human_player]:
-            player_result = u"玩家失敗！"
+            player_result = "Player is loser!"
         else:
-            player_result = u"玩家獲勝！"
+            player_result = "Player is winner!"
             
     if 1 == victory_result:
-        screen.blit(write(u"D.T. is dead，Democratic Party win the game. %s"%player_result, BLACK, 20), status_loc)
+        screen.blit(write("D.T. is dead, Democratic Party win the game. %s"%player_result, BLACK, 20), status_loc)
         blue_win_num += 1
     elif 2 == victory_result:
-        screen.blit(write(u"Democratic Party win the game. %s"%player_result, BLACK, 20), status_loc)
+        screen.blit(write("Democratic Party win the game. %s"%player_result, BLACK, 20), status_loc)
         blue_win_num += 1
     elif 3 == victory_result:
-        screen.blit(write(u"D.T.獲得提名為院長，Republican Party win the game. %s"%player_result, BLACK, 20), status_loc)
+        screen.blit(write("D.T. is chancellor, Republican Party win the game. %s"%player_result, BLACK, 20), status_loc)
         green_win_num += 1
     elif 4 == victory_result:
-        screen.blit(write(u"Republican Party win the game. %s"%player_result, BLACK, 20), status_loc)
+        screen.blit(write("Republican Party win the game. %s"%player_result, BLACK, 20), status_loc)
         green_win_num += 1
         
-    draw_button(b_status_loc,u"重新開始", yes_btn)
+    draw_button(b_status_loc,"Restart", yes_btn)
         
 def main():
     global p1, player_role, mode, player_name_list, president, chancellor, human_player, policy_card_box, out, pre_president, pre_chancellor, broken_current, broken_num, policy_current, already_set_broken, already_set_policy_num, blue_policy_num, green_policy_num, player_live, kill_player, inv_player, victory_result, human_inv, know_bian, not_bian, party_score, election_ch, triple_s
@@ -1002,9 +1012,9 @@ def main():
                 elif 0 == player_live[human_player]:
                     mode = 4
                 else:
-                    screen.blit(write(u"%s 代表，您是否贊成 %s 擔任總統以及 %s 擔任院長？"%(player_name_list[human_player], player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
-                    draw_button(yes_btn_loc[human_player],u"同意", yes_btn)
-                    draw_button(no_btn_loc[human_player],u"否決", no_btn)
+                    screen.blit(write("%s, do you agree %s to be president and %s to be chancellor?"%(player_name_list[human_player], player_name_list[president], player_name_list[chancellor]), BLACK, 20), status_loc)
+                    draw_button(yes_btn_loc[human_player],"Accepted", yes_btn)
+                    draw_button(no_btn_loc[human_player],"Deny", no_btn)
             elif human_player == chancellor:
                 mode = 16
             else:
@@ -1036,13 +1046,13 @@ def main():
                 if 0 == policy_current:
                     p_score = 1
                     p_num = blue_policy_num
-                    policy_text = u"民主黨"
+                    policy_text = "Democratic Party"
                     blue_policy_num += 1
                 # else green
                 else:
                     p_score = -1
                     p_num = green_policy_num
-                    policy_text = u"共和黨"
+                    policy_text = "Republican Party"
                     green_policy_num += 1
                 
                 for i in range(player_num):
@@ -1061,10 +1071,10 @@ def main():
                 already_set_policy_num = 1
             
             if 3 == broken_num:
-                screen.blit(write(u"政治協商破局 %d 次，強制立法。 %s 法案通過"%(broken_num, policy_text), BLACK, 20), status_loc)
+                screen.blit(write("Negotiation broke down %d times, to enact laws. %s policy is enacted"%(broken_num, policy_text), BLACK, 20), status_loc)
             else:
-                screen.blit(write(u" %s 法案通過"%policy_text, BLACK, 20), status_loc)
-            draw_button(b_status_loc,u"繼續", yes_btn)
+                screen.blit(write(" %s policy is enacted"%policy_text, BLACK, 20), status_loc)
+            draw_button(b_status_loc,"continue", yes_btn)
         if 11 == mode:
             human_president_power()
         if 12 == mode:
@@ -1077,8 +1087,8 @@ def main():
         if 15 == mode:
             investigation_part2()
         if 16 == mode:
-            screen.blit(write(u" %s ，您被選為院長候選人，將投同意票。"%p1, BLACK, 20), status_loc)
-            draw_button(b_status_loc,u"繼續", yes_btn)
+            screen.blit(write(" %s , you will accept to be chancellor yourself."%p1, BLACK, 20), status_loc)
+            draw_button(b_status_loc,"continue", yes_btn)
         if 17 == mode:
             check_if_bian(chancellor)
         if 69 == mode:
