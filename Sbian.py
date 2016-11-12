@@ -340,7 +340,7 @@ def id_to_arrow_alpha_image(id):
         return right_arrow2        
             
 def draw_select_chancellor():
-    screen.blit(write("%s president，who is the chancellor？"%p1, BLACK, 20), status_loc)
+    screen.blit(write("%s president, who is the chancellor?"%p1, BLACK, 20), status_loc)
     
     (MouseX, MouseY) = pygame.mouse.get_pos()
     
