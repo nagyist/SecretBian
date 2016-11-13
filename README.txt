@@ -3,62 +3,49 @@
 ==Environment==
 Python 3 and Pygame
 
-Following is Chinese user guide.
+Game Rule:
+10 players join this game. Only one is human player, others are computer.
+Three players are the member of Republican Party. Six players are the member
+of Democratic Party. The last one is D.T. The member of Republican Party and 
+D.T. belong to Republican Party.
 
-Secret Trump,神祕川普，是一個類似桌上遊戲："Secret Hitler"的遊戲。
+The player name of human is "Tina". The image near "Tina" is the role of player.
+The roles include Donkey (Democratic Party), Elephant (Republican Party) and D.T.
+The member of Republican Party (NOT include D.T.) can know Republican Party
+members each other. Other roles only know the role yourself at the beginning.
 
-程式語言：Python3 + Pygame
+At the game start, random to pick up one player as president candidate.
+President candidate can select a chancellor candidate. A chancellor candidate
+can't be the last president, chancellor or dead player. A president candidate 
+and chancellor candidate will win an election if accepted tickets more than
+deny tickets. Otherwise, to increase negotiation broke down 1 times. To enact law 
+if negotiation broke down 3 times. The laws include Donkey and Elephant only.
+The possibility between the law for Donkey and Elephant is 10:19.
 
-玩法：
-這個遊戲一共有十個玩家，只有一個是人類玩家，其它九個是電腦。
-十個玩家中，有三個玩家角色是共和黨員，有六個玩家角色是民主黨員，
-剩下最後一個玩家角色是D.T.共和黨員和D.T.的黨派屬於共和黨。
+If president and chancellor candidate win the election, they can enact law.
+To enact law by president, remove one law from three laws. Then the remainder
+two laws can remove one law by chancellor. Finally, the last one law is enacted.
+If 5 donkey laws are enacted, then Democratic party win the game. If 6 elephant 
+laws are enacted then Republican party win the game.
 
-人類玩家扮演的名字叫做"Tina"，Tina名字旁邊的圖案代表玩家的角色，
-角色可能是Donkey(民主黨), Elephant(共和黨)或D.T.
-共和黨員(不包括D.T.)，可以知道哪些人是共和黨員。
-其它人一開始只知道自己的角色。
+President can kill the other live player while 3 elephant or 5 elephant laws are
+enacted. Before the player is killed, it will ask the person "Are you D.T. ?".
+Then the player will dead. If D.T. is dead, Democratic party win the game.
+Otherwise, the player is dead but the game continues to run.
 
-一開始隨機從十位玩家中，選出一位當總統候選人，
-總統可以選出一位玩家當chancellor候選人，chancellor候選人，
-不能是上一屆當選的總統或chancellor，也不能是死亡的玩家。
-總統和chancellor候選人，需經過其它非死亡的玩家投票，
-如果同意票超過一半，候選人順利當選。反之，如果同意票等於反對票，
-或反對票超過同意票，候選人競選失敗，增加一次協商破局。
-如果協商破局達3次，強制頒布一項政策。
-政策只有Donkey(民主黨)政策和Elephant(共和黨)政策兩種。
-民主黨政策和共和黨政策出現的機率是10：19。
+President can investigate the party of player while 4 elephant laws are enacted.
+After investigation, it will show elephant for D.T. and Republican party members.
+Otherwise, it will show donkey for Democratic party. The only player to know the
+investigation result is the president issue the power. Other players won't know
+the investigation result.
 
-當選的總統和chancellor，可以參與制定政策，
-上任的總統，可以從三項政策中，選擇一項政策排除。剩下的兩項政策，
-交由chancellor，chancellor也選一項排除，最後剩下來的政策，頒布實行。
-如果頒布5項Donkey政策，民主黨獲勝。如果頒布6項Elephant政策，共和黨獲勝。
+After 4 elephant laws are enacted, any president candidate select chancellor
+candidate will ask the chancellor candidate, "Are you D.T. ?". The Republican
+party win the game if the answer is "Yes". Otherwise, the game continues to run.
 
-當頒布第3次Elephant政策或第5次Elephant政策時，該屆總統有權力執行暗殺，
-暗殺前會先問被暗殺的角色是不是D.T.？而被暗殺的角色會立刻死亡。
-如果D.T.死亡，則民主黨獲勝。否則該角色死亡，遊戲繼續。
-
-當頒布第4次Elephant政策時，該屆總統有權力調查玩家的黨派，
-此時D.T.或共和黨員，黨派都是顯示共和黨。否則，顯示民主黨。
-被調查的玩家黨派，只有執行調查的總統知道，其它玩家不會知道。
-
-當Elephant政策頒布4次以後，總統候選人選擇chancellor候選人時，
-會先問chancellor候選人，是不是D.T.。若是，則共和黨獲勝。
-
-當以下4種情況時，由上屆總統候選人(或當選的總統)的順時針方向，
-由非死亡的玩家，擔任新的總統候選人：
-1.競選失敗，政治協商破局
-2.制定完政策，不需執行暗殺或調查之後
-3.當總統執行完暗殺或調查權力之後
-4.遊戲重新開始
-
-為了不影響遊戲的興緻，電腦AI的細節不便在這邊透漏，
-但可以說，AI會儘量忠於自己的黨派。
-
-=神密川普與Secret Hitler的主要不同點=
-1.神密川普中，當符合條件時，總統只有暗殺和調查的權力。
-Secret Hitler中，總統有更多不同的權力可執行。
-2.當共和黨政策達到4個以上，只要D.T.獲提名為chancellor候選人，
-不用選舉，共和黨直接勝利。Secret Hitler中，
-當法西斯陣營達到3個政策以上，提名Hitler為Chancellor的話，
-需要過半同意票，才達成法西斯陣營勝出。
+Under 4 conditions below, the next president candidate will be the clockwise of 
+last live president (candidate): 
+1. To lose the election, the negotiation broke down.
+2. To enact laws and NO any power action should be executed. (kill or investigation power)
+3. After president issue power action. (kill or investigation)
+4. The game is restart.
