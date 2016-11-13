@@ -60,16 +60,16 @@ green_flag_alpha.set_alpha(policy_alpha)
 bullet_alpha.set_alpha(policy_alpha)
 investigation_alpha.set_alpha(policy_alpha)
 
-p1  = "P1"
-p2  = "P2"
-p3  = "P3"
-p4  = "P4"
-p5  = "P5"
-p6  = "P6"
-p7  = "P7"
-p8  = "P8"
-p9  = "P9"
-p10 = "P10"
+p1  = "Tina"
+p2  = "Dunn"
+p3  = "Tate"
+p4  = "Dyer"
+p5  = "Dan"
+p6  = "Todd"
+p7  = "Dane"
+p8  = "Tash"
+p9  = "Toft"
+p10 = "Dean"
 
 p1_loc  = (990, 675)
 p2_loc  = (690, 675)
@@ -316,7 +316,7 @@ def draw_player_name():
 # find human player
 def findhp(pnlist):
     for i in range(player_num):
-        if pnlist[i] == "P1":
+        if pnlist[i] == "Tina":
             return i
 
 def id_to_arrow_image(id):
