@@ -777,7 +777,7 @@ def kill_part3():
     global kill_player
     
     screen.blit(write(" %s , bang bang!!! R.I.P."%player_name_list[kill_player], BLACK, 20), talk_loc[president])
-    screen.blit(write("Oh …", BLACK, 20), arrow_loc[kill_player])
+    screen.blit(write("Oh ...", BLACK, 20), arrow_loc[kill_player])
     
     draw_button(b_status_loc,"continue", yes_btn)
             
@@ -876,7 +876,7 @@ def final_result():
     global green_win_num, blue_win_num
     
     if 0 == player_live[human_player]:
-        player_result = "Player is dead …"
+        player_result = "Player is dead ..."
     elif 1 == victory_result or 2 == victory_result:
         if 0 == player_role[human_player]:
             player_result = "Player is winner!"
