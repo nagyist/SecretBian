@@ -11,6 +11,14 @@ PANEL = (23, 37, 55)
 GOLD = (218, 184, 117)
 TEXT = (237, 232, 218)
 MUTED = (158, 175, 191)
+
+@lru_cache(maxsize=1)
+def app_icon():
+    return pygame.image.load(str(ROOT / 'assets/icons/SecretCouncil.png'))
+
+def set_app_icon():
+    """Set the window icon and, on macOS, the running application's Dock icon."""
+    pygame.display.set_icon(app_icon())
 BLUE = (74, 151, 217)
 RED = (201, 91, 98)
 GREEN = (63, 175, 139)

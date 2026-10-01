@@ -41,7 +41,9 @@ def launch_game(edition):
 
 def display():
     pygame.display.set_caption('Secret Council · Secret Trump / 神祕阿扁')
-    return pygame.display.set_mode((1400,800),pygame.SCALED)
+    screen=pygame.display.set_mode((1400,800),pygame.SCALED)
+    set_app_icon()
+    return screen
 
 def draw_menu(screen,background,selected,ticks):
     screen.blit(background,(0,0))

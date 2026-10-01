@@ -22,6 +22,7 @@ def draw_vote_result(screen, index, accepted, player_positions, english):
     label(screen,text,rect.center,18,color,True)
 
 def install(g, edition):
+    set_app_icon()
     screen=g['screen']
     is_en=edition=='Trump'
     opposition=RED if is_en else GREEN

@@ -4,7 +4,7 @@
 
 ## 啟動
 
-需要 Python 3.10 以上。Windows 可直接雙擊 `start.bat`；本機已準備好 `.venv`。
+需要 Python 3.10 以上。Windows 可直接雙擊 `start.bat`（需先建立 `.venv` 並安裝 `requirements.txt`）。
 
 其他環境首次安裝及啟動：
 
@@ -73,6 +73,52 @@ $check = Start-Process -FilePath .\dist\SecretCouncil.exe -ArgumentList '--self-
 $check.ExitCode
 Get-Content artifacts\exe-check.json
 ```
+
+## 打包 macOS arm64 單檔執行檔
+
+在 Apple Silicon Mac（M 系列）上，使用原生 arm64 的 Python 3.10 以上執行：
+
+```sh
+./build-macos-arm64.sh
+```
+
+腳本會自動建立專用的 `.venv-macos-arm64`、安裝 `requirements-build.txt`，再使用 `main-macos-arm64.spec` 產生單一檔案 `dist/SecretCouncil-arm64`。Python runtime、圖片、中文字型及兩版遊戲全部內含，交付時只需這一個檔案，不需另外安裝 Python。可在 Finder 雙擊啟動，或在終端機執行：
+
+```sh
+./dist/SecretCouncil-arm64
+```
+
+PyInstaller onefile 啟動時會將內含資源解壓至系統暫存目錄，退出後清理，首次啟動會有解壓時間。複製到其他位置後仍可直接執行；若傳送方式遺失執行權限，先執行 `chmod +x SecretCouncil-arm64`。
+
+若要指定 Python 路徑：
+
+```sh
+PYTHON=/path/to/arm64/python3 ./build-macos-arm64.sh
+```
+
+腳本會檢查 Python 的作業系統、架構及版本；不接受 Rosetta 下的 x86_64 Python。macOS 使用 PyInstaller onefile 並明確指定 `target_arch='arm64'`，Windows 仍使用原有的單檔 EXE 設定。兩個平台需各自在對應的作業系統建置。參考 [PyInstaller 建置說明](https://pyinstaller.org/en/stable/usage.html)。
+
+目前產物使用 PyInstaller 的 ad-hoc 簽章，尚未使用 Apple Developer ID 簽章或公證。
+
+打包後可執行內含診斷（會短暫開啟視窗，自動操作兩版各一局與四個入口）：
+
+```sh
+./dist/SecretCouncil-arm64 --self-test artifacts/macos-arm64-check.json
+cat artifacts/macos-arm64-check.json
+```
+
+若需要標準 macOS APP 套件，也保留原有建置方式：
+
+```sh
+./build-macos-arm64.sh --app
+open dist/SecretCouncil.app
+```
+
+兩種模式都使用 `assets/icons/SecretCouncil.png` 的自訂圖示。建置時透過 `create-macos-icon.sh` 產生標準及 Retina 尺寸的 `.icns`；APP 模式由 `main-macos-arm64-app.spec` 嵌入圖示，單檔模式由 `set-macos-file-icon.js` 設定 Finder 圖示。主選單與兩版遊戲也會使用內含 PNG 設定執行時的 Dock 圖示。
+
+單檔的 Finder 自訂圖示存放於 macOS 檔案中繼資料，複製或傳送時需保留 resource fork／extended attributes（例如使用 Finder 複製或 `ditto`）。部分上傳平台會移除此資訊；遊戲執行時的 Dock 圖示仍會正常顯示。
+
+套用 Finder 自訂圖示後，一般 `codesign --verify` 可通過，但 `codesign --verify --strict` 會拒絕 resource fork／FinderInfo；若需要正式簽章與公證，請使用 `--app` 模式，將圖示存放於 APP 的 Resources。
 
 ## 驗證
 
